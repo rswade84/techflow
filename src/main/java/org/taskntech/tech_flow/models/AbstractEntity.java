@@ -8,9 +8,6 @@ import java.util.Objects;
 
 public abstract class AbstractEntity {
 
-    @Id
-    @GeneratedValue
-    private int id;
 
     @NotBlank
     @Size(min = 3, max = 30, message = "Name must be between 3 and 30 characters")
@@ -20,13 +17,11 @@ public abstract class AbstractEntity {
     @Size(min = 10, max= 35, message = "Email must be between 10 and 35 characters")
     private String email;
 
-    public AbstractEntity(){
-        this.
+    public AbstractEntity(String name, String email){
+        this.name=name;
+        this.email=email;
     }
 
-    public int getId() {
-        return id;
-    }
 
     public String getName() {
         return name;
@@ -48,11 +43,11 @@ public abstract class AbstractEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof AbstractEntity that)) return false;
-        return id == that.id && Objects.equals(email, that.email);
+        return Objects.equals(email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email);
+        return Objects.hash(email);
     }
 }

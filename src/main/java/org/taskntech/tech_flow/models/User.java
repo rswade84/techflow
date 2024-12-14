@@ -1,8 +1,15 @@
 package org.taskntech.tech_flow.models;
 
-public class User extends AbstractEntity {
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 
-    public User(){
-        super();
+public class User extends AbstractEntity {
+    @Id
+    @GeneratedValue
+    private int ID;
+
+
+    public User(String name, String email){
+        super(name,email);
     }
 }

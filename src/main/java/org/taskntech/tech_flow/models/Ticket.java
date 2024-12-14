@@ -1,24 +1,50 @@
 package org.taskntech.tech_flow.models;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 public class Ticket extends AbstractEntity {
 
+    @Id
+    @GeneratedValue
+    private int ID;
+
+    @NotBlank
+    @Size(min = 3, max = 30, message = "Name must be between 3 and 30 characters")
     private String details;
 
+    @NotNull(message= "Priority level is required")
     private int priority;
 
-    private String status;//create enum
+    //find declarative
+    private String status;//edit enum
 
-    private LocalDate dateSubmitted;
 
+    private String dateSubmitted;
+
+    @NotBlank
+    @Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
     private String clientDepartment;
 
-    private LocalDate lastEdited;
+    private String lastEdited;
 
-    private String Notes;
+    //edit after core feautures are done
+    private String notes;
+
+    public Ticket(String name, String email, String details, int priority, String clientDepartment){
+        super(name,email);
+        this.details= details;
+        this.priority=priority;
+        this.clientDepartment=clientDepartment;
+        setDateSubmitted();
+    }
 
     public String getDetails() {
         return details;
@@ -40,16 +66,20 @@ public class Ticket extends AbstractEntity {
         return status;
     }
 
-    public void setStatus(String status) {
+    /*public void setStatus(String status) { needs to be editted after enum is done
         this.status = status;
-    }
+    }*/
 
-    public LocalDate getDateSubmitted() {
+    public String getDateSubmitted() {
         return dateSubmitted;
     }
 
-    public void setDateSubmitted(LocalDate dateSubmitted) {
-        this.dateSubmitted = dateSubmitted;
+    private void setDateSubmitted() {
+
+        LocalDateTime dateObj = LocalDateTime.now();
+        DateTimeFormatter dateFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = dateObj.format(dateFormatObj);
+        this.dateSubmitted = formattedDate;
     }
 
     public String getClientDepartment() {
@@ -60,19 +90,24 @@ public class Ticket extends AbstractEntity {
         this.clientDepartment = clientDepartment;
     }
 
-    public LocalDate getLastEdited() {
+    public String getLastEdited() {
         return lastEdited;
     }
 
-    public void setLastEdited(LocalDate lastEdited) {
-        this.lastEdited = lastEdited;
+    public void setLastEdited() {
+        LocalDateTime dateObj = LocalDateTime.now();
+        DateTimeFormatter dateFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = dateObj.format(dateFormatObj);
+        this.lastEdited= formattedDate;
     }
 
     public String getNotes() {
-        return Notes;
+        return notes;
     }
 
     public void setNotes(String notes) {
-        Notes = notes;
+        this.notes = notes;
     }
+
+
 }
