@@ -28,6 +28,7 @@ public class Ticket extends AbstractEntity {
     private String status;//edit enum
 
     //NO declarative are needed
+    //Going to switch to java.sql.timestamp
     private String dateSubmitted;
 
     @NotBlank
@@ -35,6 +36,7 @@ public class Ticket extends AbstractEntity {
     private String clientDepartment;
 
     //NO declarative are needed
+    //Going to switch to java.sql.timestamp
     private String lastEdited;
 
     //edit after core features are done
