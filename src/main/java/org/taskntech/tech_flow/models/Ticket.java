@@ -4,8 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -14,7 +14,7 @@ public class Ticket extends AbstractEntity {
 
     @Id
     @GeneratedValue
-    private int ID;
+    private int ticketId;
 
     @NotBlank
     @Size(min = 3, max = 30, message = "Name must be between 3 and 30 characters")
@@ -24,18 +24,20 @@ public class Ticket extends AbstractEntity {
     private int priority;
 
     //find declarative
+    //edit after core features are done
     private String status;//edit enum
 
-
+    //NO declarative are needed
     private String dateSubmitted;
 
     @NotBlank
     @Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
     private String clientDepartment;
 
+    //NO declarative are needed
     private String lastEdited;
 
-    //edit after core feautures are done
+    //edit after core features are done
     private String notes;
 
     public Ticket(String name, String email, String details, int priority, String clientDepartment){
@@ -52,6 +54,10 @@ public class Ticket extends AbstractEntity {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public int getTicketId() {
+        return ticketId;
     }
 
     public int getPriority() {
