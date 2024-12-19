@@ -3,8 +3,8 @@ package org.taskntech.tech_flow.models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotBlank;
+//import jakarta.validation.constraints.Size;
+//import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,11 +16,11 @@ public class Ticket extends AbstractEntity {
     @GeneratedValue
     private int ticketId;
 
-    @NotBlank
-    @Size(min = 3, max = 30, message = "Name must be between 3 and 30 characters")
+    //@NotBlank
+    //@Size(min = 3, max = 30, message = "Name must be between 3 and 30 characters")
     private String details;
 
-    @NotNull(message= "Priority level is required")
+    //@NotNull(message= "Priority level is required")
     private int priority;
 
     //find declarative
@@ -31,8 +31,8 @@ public class Ticket extends AbstractEntity {
     //Going to switch to java.sql.timestamp
     private String dateSubmitted;
 
-    @NotBlank
-    @Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
+    //@NotBlank
+    //@Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
     private String clientDepartment;
 
     //NO declarative are needed
