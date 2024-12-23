@@ -1,0 +1,25 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+<head th:replace = "fragments.html :: head">
+</head>
+<body>
+<h1>Demo</h1>
+<div class="container">
+    <th:block th:if = "${authenticated}">
+        <p>Welcome <span th:text = "${name}"></span>!</p>
+        <p>Username: <span th:text = "${username}"></span></p>
+        <p>Email: <span th:text="${email}"></span></p>
+        <p>All: <span th:text="${all}"></span></p>
+    </th:block>
+
+
+
+    <th:block th:unless = ${authenticated}>
+        <button><a href="/oauth2/authorization/github">Login With GitHub</a></button>
+        <button><a href="/oauth2/authorization/google">Login With Google</a></button>
+    </th:block>
+
+</div>
+
+</body>
+</html>
