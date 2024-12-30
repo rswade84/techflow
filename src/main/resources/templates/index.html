@@ -2,9 +2,11 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
 <head th:replace = "fragments.html :: head">
 </head>
-<body>
-<h1>Demo</h1>
-<div class="container">
+<body class="bg-gray-200 font-sans">
+    <header class="bg-white p-6">
+        <h1 class="text-4xl font-bold">TechFlow</h1>
+    </header>
+<div class="m-auto my-20 max-w-lg items-center flex flex-col">
     <th:block th:if = "${authenticated}">
         <p>Welcome <span th:text = "${name}"></span>!</p>
         <p>Username: <span th:text = "${username}"></span></p>
@@ -15,8 +17,12 @@
 
 
     <th:block th:unless = ${authenticated}>
-        <button><a href="/oauth2/authorization/github">Login With GitHub</a></button>
-        <button><a href="/oauth2/authorization/google">Login With Google</a></button>
+        <p class="text-4xl font-bold text-green-700 text-center">Welcome to your all-in-one hub for tech support tickets.</p>
+        <div class="flex flex-col m-auto my-10 p-10 bg-gray-300 border-solid border-gray-700 border-2">
+            <button class="bg-zinc-950 hover:bg-zinc-800 text-white font-bold py-2 px-4 rounded mb-6"><a href="/oauth2/authorization/github">Login With GitHub</a></button>
+            <button class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded"><a href="/oauth2/authorization/google">Login With Google</a></button>
+        </div>
+
     </th:block>
 
 </div>
