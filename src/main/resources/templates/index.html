@@ -1,12 +1,24 @@
-<!--Imported from Doug's OAuth feature branch to run his portion of the app - not original code-->
 
-<!DOCTYPE html >
+<!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
-<head th:replace = "fragments.html :: head">
-</head>
+<head th:replace="fragments.html :: head"></head>
 <body class="bg-gray-200 font-sans">
-<header class="bg-white p-6">
-  <h1 class="text-4xl font-bold">TechFlow</h1>
+<header class="bg-white p-6 flex items-center justify-between">
+  <div class="flex items-center space-x-6">
+    <h1 class="text-4xl font-bold">TechFlow</h1>
+    <div class="text-black font-bold">
+      <p>Current User: <span th:text="${name}"></span></p>
+    </div>
+  </div>
+
+  <nav class="nav-links">
+    <ul class="flex justify-end space-x-6 text-black">
+      <li><a href="/" class="hover:text-green-400">Home</a></li>
+      <li><a href="/manage-account" class="hover:text-green-400">Manage Account</a></li>
+      <li><a href="/logout" class="hover:text-green-400">Logout</a></li>
+    </ul>
+  </nav>
+
 </header>
 <div class="m-auto my-20 max-w-lg items-center flex flex-col">
   <th:block th:if = "${authenticated}">
