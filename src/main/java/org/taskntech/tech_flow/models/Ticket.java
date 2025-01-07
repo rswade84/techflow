@@ -24,8 +24,7 @@ public class Ticket extends AbstractEntity {
     private int priority;
 
     //find declarative
-    //edit after core features are done
-    private String status;//edit enum
+    private String status;
 
     //NO declarative are needed
     //Going to switch to java.sql.timestamp
@@ -75,13 +74,16 @@ public class Ticket extends AbstractEntity {
         this.priority = priority;
     }
 
+    //Method for enum inclusion
+    //public void setPriority(PriorityValue name) {this.priority = name.getPriority();}
+
     public String getStatus() {
         return status;
     }
 
-    /*public void setStatus(String status) { needs to be editted after enum is done
-        this.status = status;
-    }*/
+    public void setStatus(StatusUpdates name) {
+       this.status = name.getStatus();
+    }
 
     public String getDateSubmitted() {
         return dateSubmitted;

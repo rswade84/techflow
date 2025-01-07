@@ -1,7 +1,7 @@
 package org.taskntech.tech_flow.models;
 
 public enum StatusUpdates {
-    /*NOT_STARTED("Not Started"),
+    NOT_STARTED("Not Started"),
     IN_PROGRESS("In Progress"),
     DELAYED("Delayed"),
     RESOLVED("Resolved"),
@@ -9,7 +9,11 @@ public enum StatusUpdates {
 
     private final String displayStatus;
 
-    public StatusUpdates(String displayStatus){
-        this.displayStatus=displayStatus;
-    }*/
+    private StatusUpdates(String value){
+        this.displayStatus=value;
+    }
+
+    public String getStatus(){
+        return displayStatus;
+    }
 }
