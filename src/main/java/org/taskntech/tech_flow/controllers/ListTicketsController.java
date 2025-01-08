@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.taskntech.tech_flow.models.PriorityValue;
+import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
 import org.taskntech.tech_flow.service.TicketService;
 
 @Controller
 @RequestMapping("/tickets")
 public class ListTicketsController {
-
         @Autowired
         private TicketService ticketService;
 
@@ -30,7 +31,9 @@ public class ListTicketsController {
         // Display the form to create a new ticket.
         @GetMapping("/create")
         public String displayCreateTicketForm(Model model) {
-                model.addAttribute("ticket", new Ticket()); // Ensure the form has a ticket object
+                model.addAttribute("ticket", new Ticket());
+                model.addAttribute("priorityValues", PriorityValue.values());
+                model.addAttribute("statusValues", StatusUpdates.values());
                 return "tickets/create";
         }
 
@@ -41,6 +44,8 @@ public class ListTicketsController {
                 BindingResult bindingResult,
                 Model model) {
                 if (bindingResult.hasErrors()) {
+                        model.addAttribute("priorityValues", PriorityValue.values());
+                        model.addAttribute("statusValues", StatusUpdates.values());
                         model.addAttribute("errorMessage", "Please fix the errors in the form");
                         return "tickets/create";
                 }
@@ -49,6 +54,8 @@ public class ListTicketsController {
                         ticketService.createTicket(ticket);
                         return "redirect:/tickets";
                 } catch (ValidationException e) {
+                        model.addAttribute("priorityValues", PriorityValue.values());
+                        model.addAttribute("statusValues", StatusUpdates.values());
                         model.addAttribute("errorMessage", e.getMessage());
                         return "tickets/create";
                 }
