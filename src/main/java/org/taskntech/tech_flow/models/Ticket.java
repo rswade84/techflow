@@ -5,6 +5,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 //import jakarta.validation.constraints.Size;
 //import jakarta.validation.constraints.NotBlank;
 
@@ -18,14 +21,16 @@ public class Ticket extends AbstractEntity {
     @GeneratedValue
     private int ticketId;
 
-    //@NotBlank
-    //@Size(min = 3, max = 30, message = "Name must be between 3 and 30 characters")
+    // UPDATE - Had to increase message details length
+    @NotBlank
+    @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters")
     private String details;
 
-    //@NotNull(message= "Priority level is required")
     // UPDATE - Changed from int to PriorityValue enum for proper enum handling
+    @NotNull(message = "Priority level is required")
     @Enumerated(EnumType.STRING)
     private PriorityValue priority;
+
 
     //find declarative
     // UPDATE - Changed from String to StatusUpdates enum for proper enum handling
@@ -36,8 +41,8 @@ public class Ticket extends AbstractEntity {
     //Going to switch to java.sql.timestamp
     private String dateSubmitted;
 
-    //@NotBlank
-    //@Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
+    @NotBlank
+    @Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
     private String clientDepartment;
 
     //NO declarative are needed
@@ -48,10 +53,10 @@ public class Ticket extends AbstractEntity {
     private String notes;
 
     // UPDATE - Updated constructor to use PriorityValue enum instead of int
-    public Ticket(String name, String email, String details, PriorityValue priority, String clientDepartment){
-        super(name,email);
-        this.details= details;
-        this.priority = priority;
+    public Ticket(String name, String email, String details, PriorityValue priority, String clientDepartment) {
+        super(name, email);
+        this.details = details;
+        this.priority = priority; // Allow null here
         this.clientDepartment = clientDepartment;
         setDateSubmitted();
     }
@@ -59,9 +64,10 @@ public class Ticket extends AbstractEntity {
     // Added a No-argument constructor
     public Ticket() {
         super("", "");
-        this.priority = PriorityValue.LOW;  // Set default priority
-        this.status = StatusUpdates.NOT_STARTED;  // Set default status
+        this.priority = PriorityValue.LOW; // Sets the default value to low on the form
+        this.status = StatusUpdates.NOT_STARTED;
     }
+
 
     public String getDetails() {
         return details;
