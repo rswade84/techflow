@@ -16,4 +16,10 @@ public enum StatusUpdates {
     public String getStatus(){
         return displayStatus;
     }
+
+    // UPDATE - Added toString method
+    @Override
+    public String toString() {
+        return displayStatus;
+    }
 }
