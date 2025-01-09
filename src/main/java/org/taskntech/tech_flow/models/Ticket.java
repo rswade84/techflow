@@ -3,9 +3,13 @@ package org.taskntech.tech_flow.models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.NotBlank;
+//import jakarta.validation.constraints.Size;
+//import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,16 +21,21 @@ public class Ticket extends AbstractEntity {
     @GeneratedValue
     private int ticketId;
 
+    // UPDATE - Had to increase message details length
     @NotBlank
-    @Size(min = 3, max = 30, message = "Name must be between 3 and 30 characters")
+    @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters")
     private String details;
 
-    @NotNull(message= "Priority level is required")
-    private int priority;
+    // UPDATE - Changed from int to PriorityValue enum for proper enum handling
+    @NotNull(message = "Priority level is required")
+    @Enumerated(EnumType.STRING)
+    private PriorityValue priority;
+
 
     //find declarative
-    //edit after core features are done
-    private String status;//edit enum
+    // UPDATE - Changed from String to StatusUpdates enum for proper enum handling
+    @Enumerated(EnumType.STRING)
+    private StatusUpdates status;
 
     //NO declarative are needed
     //Going to switch to java.sql.timestamp
@@ -43,13 +52,22 @@ public class Ticket extends AbstractEntity {
     //edit after core features are done
     private String notes;
 
-    public Ticket(String name, String email, String details, int priority, String clientDepartment){
-        super(name,email);
-        this.details= details;
-        this.priority=priority;
-        this.clientDepartment=clientDepartment;
+    // UPDATE - Updated constructor to use PriorityValue enum instead of int
+    public Ticket(String name, String email, String details, PriorityValue priority, String clientDepartment) {
+        super(name, email);
+        this.details = details;
+        this.priority = priority; // Allow null here
+        this.clientDepartment = clientDepartment;
         setDateSubmitted();
     }
+
+    // Added a No-argument constructor
+    public Ticket() {
+        super("", "");
+        this.priority = PriorityValue.LOW; // Sets the default value to low on the form
+        this.status = StatusUpdates.NOT_STARTED;
+    }
+
 
     public String getDetails() {
         return details;
@@ -63,28 +81,31 @@ public class Ticket extends AbstractEntity {
         return ticketId;
     }
 
-    public int getPriority() {
+    // UPDATE - Changed to return PriorityValue enum instead of int
+    public PriorityValue getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    // UPDATE - Changed to accept PriorityValue enum instead of int
+    public void setPriority(PriorityValue priority) {
         this.priority = priority;
     }
 
-    public String getStatus() {
+    // UPDATE - Changed to return StatusUpdates enum instead of String
+    public StatusUpdates getStatus() {
         return status;
     }
 
-    /*public void setStatus(String status) { needs to be editted after enum is done
+    // UPDATE - Changed to store enum directly instead of string value
+    public void setStatus(StatusUpdates status) {
         this.status = status;
-    }*/
+    }
 
     public String getDateSubmitted() {
         return dateSubmitted;
     }
 
     private void setDateSubmitted() {
-
         LocalDateTime dateObj = LocalDateTime.now();
         DateTimeFormatter dateFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedDate = dateObj.format(dateFormatObj);
@@ -117,6 +138,4 @@ public class Ticket extends AbstractEntity {
     public void setNotes(String notes) {
         this.notes = notes;
     }
-
-
 }
