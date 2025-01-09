@@ -1,6 +1,8 @@
 package org.taskntech.tech_flow.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 //import jakarta.validation.constraints.Size;
 //import jakarta.validation.constraints.NotBlank;
 
@@ -21,9 +23,8 @@ public class Ticket extends AbstractEntity {
     //@NotNull(message= "Priority level is required")
     private int priority;
 
-    // UPDATED - Enum for the ticket status
-    @Enumerated(EnumType.STRING)
-    private StatusUpdates status = StatusUpdates.NOT_STARTED; // Default status
+    //find declarative
+    private String status;
 
     //NO declarative are needed
     //Going to switch to java.sql.timestamp
@@ -73,15 +74,15 @@ public class Ticket extends AbstractEntity {
         this.priority = priority;
     }
 
-    // UPDATED - Since status is now an enum
-    public StatusUpdates getStatus() {
+    //Method for enum inclusion
+    //public void setPriority(PriorityValue name) {this.priority = name.getPriority();}
+
+    public String getStatus() {
         return status;
     }
 
-    // UPDATED - Since status is now an enum
-    public void setStatus(StatusUpdates status) {
-        this.status = status;
-        setLastEdited(); // Update the last edited timestamp when status changes
+    public void setStatus(StatusUpdates name) {
+       this.status = name.getStatus();
     }
 
     public String getDateSubmitted() {
