@@ -39,7 +39,7 @@ public class Ticket extends AbstractEntity {
 
     //NO declarative are needed
     //Going to switch to java.sql.timestamp
-    private String dateSubmitted;
+    private LocalDateTime dateSubmitted;
 
     @NotBlank
     @Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
@@ -47,7 +47,7 @@ public class Ticket extends AbstractEntity {
 
     //NO declarative are needed
     //Going to switch to java.sql.timestamp
-    private String lastEdited;
+    private LocalDateTime lastEdited;
 
     //edit after core features are done
     private String notes;
@@ -66,6 +66,7 @@ public class Ticket extends AbstractEntity {
         super("", "");
         this.priority = PriorityValue.LOW; // Sets the default value to low on the form
         this.status = StatusUpdates.NOT_STARTED;
+        setDateSubmitted();
     }
 
 
@@ -101,15 +102,19 @@ public class Ticket extends AbstractEntity {
         this.status = status;
     }
 
-    public String getDateSubmitted() {
+    public LocalDateTime getDateSubmitted() {
         return dateSubmitted;
     }
 
     private void setDateSubmitted() {
-        LocalDateTime dateObj = LocalDateTime.now();
+        this.dateSubmitted = LocalDateTime.now();
+    }
+
+    public String getDateString( LocalDateTime date) {
         DateTimeFormatter dateFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedDate = dateObj.format(dateFormatObj);
-        this.dateSubmitted = formattedDate;
+        String formattedDate = date.format(dateFormatObj);
+        return formattedDate;
+
     }
 
     public String getClientDepartment() {
@@ -120,15 +125,13 @@ public class Ticket extends AbstractEntity {
         this.clientDepartment = clientDepartment;
     }
 
-    public String getLastEdited() {
+    public LocalDateTime getLastEdited() {
         return lastEdited;
     }
 
     public void setLastEdited() {
-        LocalDateTime dateObj = LocalDateTime.now();
-        DateTimeFormatter dateFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedDate = dateObj.format(dateFormatObj);
-        this.lastEdited= formattedDate;
+
+        this.lastEdited= LocalDateTime.now();
     }
 
     public String getNotes() {
