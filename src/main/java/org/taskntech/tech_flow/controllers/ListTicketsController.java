@@ -2,7 +2,6 @@ package org.taskntech.tech_flow.controllers;
 
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
-import org.apache.tomcat.util.http.parser.Priority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +14,7 @@ import org.taskntech.tech_flow.models.Ticket;
 import org.taskntech.tech_flow.service.TicketService;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /*
  * Model is a interface that is used to add data to the model.
@@ -66,11 +63,11 @@ public class ListTicketsController {
                         ticketService.deleteTicket(ticketId);
                         return "redirect:/tickets";
                 } catch (TicketNotFoundException e) {
-                        return "redirects:/tickets";
+                        return "redirect:/tickets";
                 }
         }
 
-        // Add update/edit ticket
+        // Display edit form for existing ticket
         @GetMapping("/edit/{ticketId}")
         public String showEditForm(@PathVariable Integer ticketId, Model model) {
                 // Using optional for cases of if the ticket does not exist
@@ -80,7 +77,7 @@ public class ListTicketsController {
                 if (ticket == null) {
                         throw new TicketNotFoundException("Ticket not found with ID: " + ticketId);
                 }
-                model.addAttribute("ticket, ticket"); // Adds the existing ticket
+                model.addAttribute("ticket", ticket); // Adds the existing ticket
                 model.addAttribute("priorityValues", PriorityValue.values()); // Adds the priority values
                 model.addAttribute("statusValues", StatusUpdates.values()); // Adds the status values
                 return "tickets/edit"; // Returns the edit form
@@ -110,16 +107,29 @@ public class ListTicketsController {
                 }
         }
 
-
-        // NEEDS COMPLETEING
-        @PostMapping("/edit/(ticketId}")
+        // Process the edit form submission
+        @PostMapping("/edit/{ticketId}")
         public String processEditForm(@PathVariable Integer ticketId,
                                       @Valid @ModelAttribute("ticket") Ticket ticket,
                                       BindingResult bindingResult,
                                       Model model) {
                 if (bindingResult.hasErrors()) {
-                        // List all the priority and status values
-                        model.addAttribute("pri")
+                        model.addAttribute("priorityValues", PriorityValue.values());
+                        model.addAttribute("statusValues", StatusUpdates.values());
+                        model.addAttribute("errorMessage", "Please fix the errors in the form");
+                        return "tickets/edit";
+                }
+
+                try {
+                        ticket.setTicketId(ticketId);
+                        ticket.setLastEdited();
+                        ticketService.updateTicket(ticket);
+                        return "redirect:/tickets";
+                } catch (Exception e) {
+                        model.addAttribute("errorMessage", "Error updating ticket: " + e.getMessage());
+                        model.addAttribute("priorityValues", PriorityValue.values());
+                        model.addAttribute("statusValues", StatusUpdates.values());
+                        return "tickets/edit";
                 }
         }
 
