@@ -82,6 +82,11 @@ public class Ticket extends AbstractEntity {
         return ticketId;
     }
 
+    // UPDATE - Added a setter for ticketId for updating
+    public void setTicketId(int ticketId) {
+        this.ticketId = ticketId;
+    }
+
     // UPDATE - Changed to return PriorityValue enum instead of int
     public PriorityValue getPriority() {
         return priority;
