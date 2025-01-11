@@ -2,6 +2,7 @@ package org.taskntech.tech_flow.controllers;
 
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
+import org.apache.tomcat.util.http.parser.Priority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,21 +64,18 @@ public class ListTicketsController {
 
         // Add update/edit ticket
         @GetMapping("/edit/{ticketId}")
-        public String updateTicketDetails(@PathVariable Integer ticketId, Model model) {
+        public String showEditForm(@PathVariable Integer ticketId, Model model) {
                 // Using optional for cases of if the ticket does not exist
                 Ticket ticket = ticketService.findTicketById(ticketId);
 
                 // Try to find the ticket and store it
-                try {
-                        if (ticket == null) {
-                                throw new TicketNotFoundException("Ticket not found with ID: " + ticketId);
-                        }
-                        model.addAttribute("ticket, ticket");
-                        return "tickets/edit";
-
-                } catch (TicketNotFoundException e) {
-                        return "redirects:/tickets";
+                if (ticket == null) {
+                        throw new TicketNotFoundException("Ticket not found with ID: " + ticketId);
                 }
+                model.addAttribute("ticket, ticket"); // Adds the existing ticket
+                model.addAttribute("priorityValues", PriorityValue.values()); // Adds the priority values
+                model.addAttribute("statusValues", StatusUpdates.values()); // Adds the status values
+                return "tickets/edit"; // Returns the edit form
         }
 
         // Process the ticket creation form
