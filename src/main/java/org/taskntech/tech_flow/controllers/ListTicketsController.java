@@ -19,6 +19,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/*
+ * Model is a interface that is used to add data to the model.
+ * @PathVariable = is used to bind the URL path variable to a method parameter.
+ * @Valid = is used to validate the object before saving it to the database.
+ * @ModelAttribute = is used to bind the form data to a model object.
+ *
+ * */
+
 @Controller
 @RequestMapping("/tickets")
 public class ListTicketsController {
@@ -101,6 +109,23 @@ public class ListTicketsController {
                         return "tickets/create";
                 }
         }
+
+
+        // NEEDS COMPLETEING
+        @PostMapping("/edit/(ticketId}")
+        public String processEditForm(@PathVariable Integer ticketId,
+                                      @Valid @ModelAttribute("ticket") Ticket ticket,
+                                      BindingResult bindingResult,
+                                      Model model) {
+                if (bindingResult.hasErrors()) {
+                        // List all the priority and status values
+                        model.addAttribute("pri")
+                }
+        }
+
+
+
+
 
         // Setter for unit testing
         public void setTicketService(TicketService ticketService) {
