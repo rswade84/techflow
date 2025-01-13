@@ -12,11 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.taskntech.tech_flow.data.UserRepository;
 import org.taskntech.tech_flow.models.User;
 
-//import java.io.IOException;
-//import java.nio.file.Files;
-//import java.nio.file.Path;
-//import java.nio.file.Paths;
-//import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 
 @Controller
 public class AccountController {
@@ -37,6 +37,7 @@ public class AccountController {
 
             model.addAttribute("name", user.getDisplayName());
             model.addAttribute("email", email);
+            model.addAttribute("profilePicturePath", user.getProfilePicturePath() != null ? user.getProfilePicturePath() : "/default-profile.png");
         }
         return "manage-account";
     }
@@ -54,31 +55,35 @@ public class AccountController {
         return "redirect:/manage-account?success=true";
     }
 
-    private static final String UPLOAD_DIRECTORY = "uploads/";
+    private static final String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
 
-//    @PostMapping("/manage-account/upload-profile-picture")
-//    public String uploadProfilePicture(@RequestParam("profilePicture") MultipartFile file,
-//                                       @AuthenticationPrincipal OAuth2User principal) {
-//        if (file.isEmpty()) {
-//            return "redirect:/manage-account?error=NoFileUploaded";
-//        }
-//
-//        try {
-//            String username = principal.getAttribute("login");
-//            if (username == null || username.isEmpty()) {
-//                username = principal.getAttribute("email");
-//            }
-//
-//            String fileName = username + ".profile-image";
-//            Path uploadPath = Paths.get(UPLOAD_DIRECTORY, fileName);
-//            Files.createDirectories(uploadPath.getParent());
-//            Files.write(uploadPath, file.getBytes());
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return "redirect:/manage-account?error=FileUploadFailed";
-//        }
-//        return "redirect:/manage-account?profilePictureUploaded=true";
-//    }
+    @PostMapping("/manage-account/upload-profile-picture")
+    public String uploadProfilePicture(@RequestParam("profilePicture") MultipartFile file,
+                                       @AuthenticationPrincipal OAuth2User principal) {
+        if (file.isEmpty()) {
+            return "redirect:/manage-account?error=NoFileUploaded";
+        }
+
+        try {
+            String email = principal.getAttribute("email");
+            User user = userRepository.findByEmail(email);
+
+            if (user != null) {
+                String fileName = "profile-" + user.getUserId() + ".png";
+                Path uploadPath = Paths.get(UPLOAD_DIRECTORY, fileName);
+
+                Files.createDirectories(uploadPath.getParent());
+                Files.write(uploadPath, file.getBytes());
+                user.setProfilePicturePath("/uploads/" + fileName);
+                userRepository.save(user);
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "redirect:/manage-account?error=FileUploadFailed";
+        }
+        return "redirect:/manage-account?profilePictureUploaded=true";
+    }
 
 }
