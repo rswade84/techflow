@@ -25,20 +25,8 @@ public class AccountController {
     private UserRepository userRepository;
 
     @GetMapping("/manage-account")
-    public String showManageAccountPage(Model model, @AuthenticationPrincipal OAuth2User principal) {
-        if (principal != null) {
-            String email = principal.getAttribute("email");
-            User user = userRepository.findByEmail(email);
-
-            if (user == null) {
-                user = new User(email, principal.getAttribute("name"));
-                userRepository.save(user);
-            }
-
-            model.addAttribute("name", user.getDisplayName());
-            model.addAttribute("email", email);
-            model.addAttribute("profilePicturePath", user.getProfilePicturePath() != null ? user.getProfilePicturePath() : "/default-profile.png");
-        }
+    public String showManageAccountPage() {
+        // Changed attributes for "name" and "profilePicturePath" to be handled globally - See GlobalControllerAccountSettings
         return "manage-account";
     }
 
@@ -77,7 +65,6 @@ public class AccountController {
                 user.setProfilePicturePath("/uploads/" + fileName);
                 userRepository.save(user);
             }
-
 
         } catch (IOException e) {
             e.printStackTrace();
