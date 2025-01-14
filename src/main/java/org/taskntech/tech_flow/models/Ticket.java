@@ -160,4 +160,14 @@ public class Ticket extends AbstractEntity {
     public void setPreviousStatus(StatusUpdates previousStatus) {
         this.previousStatus = previousStatus;
     }
+
+    // UPDATE - added getters for status updates
+    public StatusUpdates getPreviousStatus() {
+        return previousStatus;
+    }
+
+    // UPDATE - added getters for localdatetime
+    public LocalDateTime getStatusLastUpdated() {
+        return statusLastUpdated;
+    }
 }
