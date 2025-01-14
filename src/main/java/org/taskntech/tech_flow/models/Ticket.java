@@ -152,4 +152,12 @@ public class Ticket extends AbstractEntity {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+    public void setStatusLastUpdated(LocalDateTime statusLastUpdated) {
+        this.statusLastUpdated = statusLastUpdated;
+    }
+
+    public void setPreviousStatus(StatusUpdates previousStatus) {
+        this.previousStatus = previousStatus;
+    }
 }
