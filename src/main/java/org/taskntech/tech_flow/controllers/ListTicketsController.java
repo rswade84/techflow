@@ -56,17 +56,6 @@ public class ListTicketsController {
                 return "tickets/create";
         }
 
-        // Add delete ticket
-        @PostMapping("/delete/{ticketId}")
-        public String deleteTicket(@PathVariable Integer ticketId) {
-                try {
-                        ticketService.deleteTicket(ticketId);
-                        return "redirect:/tickets";
-                } catch (TicketNotFoundException e) {
-                        return "redirect:/tickets";
-                }
-        }
-
         // Display edit form for existing ticket
         @GetMapping("/edit/{ticketId}")
         public String showEditForm(@PathVariable Integer ticketId, Model model) {
