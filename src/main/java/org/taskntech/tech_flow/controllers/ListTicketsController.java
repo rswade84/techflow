@@ -112,10 +112,26 @@ public class ListTicketsController {
                 try {
                         ticket.setTicketId(ticketId);
                         ticket.setLastEdited();
+
+                        // Get current ticket and validate status transition
+                        Ticket currentTicket = ticketService.findTicketById(ticketId); // get the current ticket
+
+                        // Validate status transition
+                        if (currentTicket != null && ticket.getStatus() != null &&
+                                !ticketService.isValidStatusTransition(currentTicket.getStatus(), ticket.getStatus())) {
+                                throw new ValidationException("Cannot transition from " + currentTicket.getStatus() + " to " + ticket.getStatus());
+                        }
+
                         ticketService.updateTicket(ticket);
                         return "redirect:/tickets";
-                } catch (Exception e) {
-                        model.addAttribute("errorMessage", "Error updating ticket: " + e.getMessage());
+
+                } catch (ValidationException e) {
+                        model.addAttribute("errorMessage", "Invalid status transition: " + e.getMessage());
+                        model.addAttribute("priorityValues", PriorityValue.values());
+                        model.addAttribute("statusValues", StatusUpdates.values());
+                        return "tickets/edit";
+                } catch (Exception ee) {
+                        model.addAttribute("errorMessage", "Error updating ticket: " + ee.getMessage());
                         model.addAttribute("priorityValues", PriorityValue.values());
                         model.addAttribute("statusValues", StatusUpdates.values());
                         return "tickets/edit";
