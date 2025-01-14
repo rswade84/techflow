@@ -11,19 +11,27 @@
 <header th:fragment="header" class="bg-white p-6 flex items-center justify-between">
     <div class="flex items-center space-x-6">
         <h1 class="text-4xl font-bold">TechFlow</h1>
+        <th:block th:if="${requestUri != '/'}">
         <div class="text-black font-bold">
             <p>Current User: <span th:text="${name}"></span></p>
         </div>
+        </th:block>
     </div>
 
     <nav class="flex items-center space-x-6">
         <ul class="flex justify-end space-x-6 text-black">
             <li><a href="/" class="hover:text-green-400">Home</a></li>
             <li><a href="/manage-account" class="hover:text-green-400">Manage Account</a></li>
-            <li><a href="/logout" class="hover:text-green-400">Logout</a></li>
+            <li>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit">Logout</button>
+                </form>
+            </li>
         </ul>
+        <th:block th:if="${requestUri != '/'}">
         <img th:src="${profilePicturePath}" alt="Profile Picture"
              class="w-10 h-10 rounded-full border border-gray-300 object-cover">
+        </th:block>
     </nav>
 </header>
 </body>
