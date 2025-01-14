@@ -17,6 +17,14 @@ import java.time.format.DateTimeFormatter;
 @Entity
 public class Ticket extends AbstractEntity {
 
+    private LocalDateTime statusLastUpdated;  // Timestamp of last status change
+    private StatusUpdates previousStatus;     // Stores the previous status value
+
+    //NO declarative are needed
+    //Going to switch to java.sql.timestamp
+    private LocalDateTime lastEdited;
+
+
     @Id
     @GeneratedValue
     private int ticketId;
@@ -45,9 +53,7 @@ public class Ticket extends AbstractEntity {
     @Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
     private String clientDepartment;
 
-    //NO declarative are needed
-    //Going to switch to java.sql.timestamp
-    private LocalDateTime lastEdited;
+
 
     //edit after core features are done
     private String notes;
