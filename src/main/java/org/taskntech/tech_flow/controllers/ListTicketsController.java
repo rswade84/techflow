@@ -138,10 +138,6 @@ public class ListTicketsController {
                 }
         }
 
-
-
-
-
         // Setter for unit testing
         public void setTicketService(TicketService ticketService) {
                 this.ticketService = ticketService;
