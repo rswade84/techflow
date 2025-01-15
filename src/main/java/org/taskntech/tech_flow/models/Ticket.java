@@ -62,16 +62,22 @@ public class Ticket extends AbstractEntity {
     public Ticket(String name, String email, String details, PriorityValue priority, String clientDepartment) {
         super(name, email);
         this.details = details;
-        this.priority = priority; // Allow null here
+        this.priority = priority;
         this.clientDepartment = clientDepartment;
+        this.status = StatusUpdates.NOT_STARTED;  // Initialize status
+        this.previousStatus = null;               // Initialize previousStatus
+        this.statusLastUpdated = LocalDateTime.now(); // Initialize statusLastUpdated
         setDateSubmitted();
     }
 
     // Added a No-argument constructor
+    // UPDATED - to initialize previousStatus and statusLastUpdated
     public Ticket() {
         super("", "");
-        this.priority = PriorityValue.LOW; // Sets the default value to low on the form
+        this.priority = PriorityValue.LOW;
         this.status = StatusUpdates.NOT_STARTED;
+        this.previousStatus = null; // Initialize previousStatus to null when creating a new ticket for the first time
+        this.statusLastUpdated = LocalDateTime.now(); // Initialize statusLastUpdated to the current timestamp
         setDateSubmitted();
     }
 
@@ -121,11 +127,13 @@ public class Ticket extends AbstractEntity {
         this.dateSubmitted = LocalDateTime.now();
     }
 
-    public String getDateString( LocalDateTime date) {
+    // UPDATE - to hande null dates
+    public String getDateString(LocalDateTime date) {
+        if (date == null) { // check if the date is null
+            return "N/A";
+        }
         DateTimeFormatter dateFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedDate = date.format(dateFormatObj);
-        return formattedDate;
-
+        return date.format(dateFormatObj);
     }
 
     public String getClientDepartment() {
