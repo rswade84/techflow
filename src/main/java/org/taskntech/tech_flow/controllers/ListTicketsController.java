@@ -113,33 +113,26 @@ public class ListTicketsController {
                         ticket.setTicketId(ticketId);
                         ticket.setLastEdited();
 
-                        // Get current ticket and validate status transition
-                        Ticket currentTicket = ticketService.findTicketById(ticketId); // get the current ticket
-
-                        // Validate status transition
-                        if (currentTicket != null && ticket.getStatus() != null &&
-                                !ticketService.isValidStatusTransition(currentTicket.getStatus(), ticket.getStatus())) {
-                                throw new ValidationException("Cannot transition from " + currentTicket.getStatus() + " to " + ticket.getStatus());
-                        }
+                        // Get current ticket first
+                        Ticket currentTicket = ticketService.findTicketById(ticketId);
 
                         ticketService.updateTicket(ticket);
                         return "redirect:/tickets";
-
-                } catch (ValidationException e) {
-                        model.addAttribute("errorMessage", "Invalid status transition: " + e.getMessage());
+                } catch (ValidationException ve) {
+                        model.addAttribute("errorMessage", "Invalid status transition: " + ve.getMessage());
                         model.addAttribute("priorityValues", PriorityValue.values());
                         model.addAttribute("statusValues", StatusUpdates.values());
                         return "tickets/edit";
-                } catch (Exception ee) {
-                        model.addAttribute("errorMessage", "Error updating ticket: " + ee.getMessage());
+                } catch (Exception e) {
+                        model.addAttribute("errorMessage", "Error updating ticket: " + e.getMessage());
                         model.addAttribute("priorityValues", PriorityValue.values());
                         model.addAttribute("statusValues", StatusUpdates.values());
                         return "tickets/edit";
                 }
-        }
 
-        // Setter for unit testing
-        public void setTicketService(TicketService ticketService) {
-                this.ticketService = ticketService;
-        }
+}
+                // Setter for unit testing
+                public void setTicketService (TicketService ticketService){
+                        this.ticketService = ticketService;
+                }
 }
