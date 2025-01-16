@@ -1,11 +1,39 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: head}"></head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head th:replace="fragments :: head">
+    <title>Support Tickets</title>
+</head>
 <body class="p-8">
 <h1 class="text-xl mb-4">Support Tickets</h1>
 
+<!--/*
+  p-2 = padding
+  w-full = width
+  mb-4 = margin bottom
+  th:text = binds text
+  th:value = binds value
+  th:field = binds ticket properties to form fields
+  th:action = form action
+  th:class = add class
+  th:attr = add attribute
+  th:each = loop
+  th:replace = replace
+  td: = table data
+*/-->
+
+<!--/*
+  Action Button Comments:
+  th:href = creates dynamic URL with ticket ID
+  th:action = creates form action URL with ticket ID
+  onsubmit = JavaScript confirmation before delete
+  class="inline" = keeps delete button on same line as edit
+  px-3 = horizontal padding
+  py-1 = vertical padding
+  mr-2 = right margin spacing
+*/-->
+
 <!-- Link to create new ticket -->
-<a href="/tickets/create" class="bg-blue-500 text-white p-2 rounded mb-4 inline-block">
+<a th:href="@{/tickets/create}" class="bg-blue-500 text-white p-2 rounded mb-4 inline-block">
     Create New Ticket
 </a>
 
@@ -13,28 +41,53 @@
 <table class="w-full border">
     <thead>
     <!-- Header row with light gray background -->
+    <!-- UPDATE: Fixed column width to maintain consistent appearance -->
     <tr class="bg-gray-100">
-        <th class="p-2">ID</th>
-        <th class="p-2">Name</th>
-        <th class="p-2">Email</th>
-        <th class="p-2">Department</th>
-        <th class="p-2">Details</th>
-        <th class="p-2">Priority</th>
-        <th class="p-2">Status</th>
-        <th class="p-2">Date Submitted</th>
+        <th class="p-2 w-12 text-left">ID</th>
+        <th class="p-2 w-32 text-left">Name</th>
+        <th class="p-2 w-40 text-left">Email</th>
+        <th class="p-2 w-12 text-left">Department</th>
+        <th class="p-2 w-96 text-left">Details</th>
+        <th class="p-2 w-24 text-left">Priority</th>
+        <th class="p-2 w-28 text-left">Status</th>
+        <th class="p-2 w-32 text-left">Date Submitted</th>
+        <th class="p-2 w-32 text-left">Actions</th>
     </tr>
     </thead>
     <tbody>
     <!-- Iterate through tickets and display their properties -->
     <tr th:each="ticket : ${tickets}" class="border-t">
-        <td class="p-2" th:text="${ticket.ticketId}"></td>
-        <td class="p-2" th:text="${ticket.name}"></td>
-        <td class="p-2" th:text="${ticket.email}"></td>
-        <td class="p-2" th:text="${ticket.clientDepartment}"></td>
-        <td class="p-2" th:text="${ticket.details}"></td>
-        <td class="p-2" th:text="${ticket.priority}"></td>
-        <td class="p-2" th:text="${ticket.status}"></td>
-        <td class="p-2" th:text="${ticket.getDateString(ticket.dateSubmitted)}"></td>
+        <td class="p-2" th:text="${ticket.ticketId}">ID</td>
+        <td class="p-2" th:text="${ticket.name}">Name</td>
+        <td class="p-2" th:text="${ticket.email}">Email</td>
+        <td class="p-2" th:text="${ticket.clientDepartment}">Department</td>
+        <td class="p-2" th:text="${ticket.details}">Details</td>
+        <td class="p-2" th:text="${ticket.priority}">Priority</td>
+
+
+        <!-- Handles STATUS Color and Text -->
+        <td class="p-2">
+            <!-- UPDATE: Added COLORS based on ticket status -->
+            <!-- This uses TERNARY OPERATOR to select the status and color -->
+            <span th:class="${
+                ticket.status.name() == 'NOT_STARTED' ? 'bg-gray-200 text-gray-800' :
+                ticket.status.name() == 'IN_PROGRESS' ? 'bg-blue-200 text-blue-800' :
+                ticket.status.name() == 'DELAYED' ? 'bg-yellow-200 text-yellow-800' :
+                ticket.status.name() == 'RESOLVED' ? 'bg-green-200 text-green-800' :
+                'bg-red-200 text-red-800'
+            } + ' px-2 py-1 rounded-full text-sm font-semibold'"
+                  th:text="${ticket.status}">
+                Status
+            </span>
+        </td>
+        <td class="p-2" th:text="${ticket.getDateString(ticket.dateSubmitted)}">Date</td>
+        <td class="p-2">
+            <!-- UPDATE - Removed delete form and kept only edit button -->
+            <a th:href="@{/tickets/edit/{id}(id=${ticket.ticketId})}"
+               class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                Edit/Update Ticket
+            </a>
+        </td>
     </tr>
     </tbody>
 </table>

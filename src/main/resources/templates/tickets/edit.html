@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head th:replace="fragments :: head">
-    <title>Create Ticket</title>
+    <title>Edit Ticket</title>
 </head>
 <body class="p-8">
-<header th:replace = "fragments.html :: header"></header>
-<h1 class="text-xl mb-4">Create New Ticket</h1>
+<h1 class="text-xl mb-4">Edit Ticket</h1>
 
 <!--/*
   p-2 = padding
@@ -22,20 +21,18 @@
   td: = table data
 */-->
 
-<form th:action="@{/tickets/create}" th:object="${ticket}" method="POST" class="max-w-lg">
-    <!-- Error message display -->
+<!-- Form is using max width -->
+<form method="POST" th:action="@{/tickets/edit/{id}(id=${ticket.ticketId})}" th:object="${ticket}" class="max-w-lg">
 
-    <!-- Validation error messages -->
-    <div th:if="${#fields.hasErrors('*')}" class="bg-red-100 border border-red-500 text-red-700 p-3 rounded mb-4">
+    <div th:if="${#fields.hasErrors('*')}">
         <ul>
-            <li th:each="err : ${#fields.errors('*')}" th:text="${err}" />
+            <li th:each="err : ${#fields.errors('*')}" th:text="${err}" class="text-red-600" />
         </ul>
     </div>
 
-
-    <div th:if="${errorMessage}" class="bg-red-100 border border-red-500 text-red-700 p-3 rounded mb-4">
-        <span th:text="${errorMessage}">Error message goes here</span>
-    </div>
+    <!-- If theres an error, display message -->
+    <div th:if="${errorMessage}" class="bg-red-100 border border-red-500 text-red-700 p-3 rounded mb-4"
+         th:text="${errorMessage}"></div>
 
     <table class="w-full border">
         <tr>
@@ -68,6 +65,17 @@
             </td>
         </tr>
         <tr>
+            <th class="p-2"><label for="status">Status</label></th>
+            <td class="p-2">
+                <select id="status" class="w-full p-2 border rounded" th:field="*{status}" required>
+                    <option th:each="statusOpt : ${statusValues}"
+                            th:value="${statusOpt.name()}"
+                            th:text="${statusOpt.displayStatus}">
+                    </option>
+                </select>
+            </td>
+        </tr>
+        <tr>
             <th class="p-2"><label for="department">Department</label></th>
             <td class="p-2">
                 <input id="department" class="w-full p-2 border rounded" type="text" th:field="*{clientDepartment}" required>
@@ -77,7 +85,7 @@
 
     <!-- Buttons -->
     <div class="mt-4">
-        <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 inline-block">Create Ticket</button>
+        <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 inline-block">Update Ticket</button>
         <a href="/tickets" class="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 ml-2 inline-block">Cancel</a>
     </div>
 </form>
