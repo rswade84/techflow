@@ -3,8 +3,9 @@
 <head th:replace="fragments :: head">
     <title>Create Ticket</title>
 </head>
-<body class="p-8">
+<body class="bg-gray-200 font-sans">
 <header th:replace = "fragments.html :: header"></header>
+<div class="m-auto my-20 max-w-lg items-center flex flex-col">
 <h1 class="text-xl mb-4">Create New Ticket</h1>
 
 <!--/*
@@ -81,5 +82,6 @@
         <a href="/tickets" class="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 ml-2 inline-block">Cancel</a>
     </div>
 </form>
+</div>
 </body>
 </html>
