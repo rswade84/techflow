@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.taskntech.tech_flow.data.TicketRepository;
 import org.taskntech.tech_flow.exceptions.TicketNotFoundException;
+import org.taskntech.tech_flow.models.FilterValue;
 import org.taskntech.tech_flow.models.PriorityValue;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
@@ -37,7 +38,99 @@ public class TicketService {
                 ticketRepository.findAll().forEach(ticket -> { // Iterates over repo/database, returns all tickets and adds them to the list
                         tickets.add(ticket);
                 });
+
+                tickets.removeIf( t -> t.getStatus() == StatusUpdates.CLOSED);
+
                 return tickets;
+        }
+
+        // Sort ticket list
+
+        public List<Ticket> getTicketList(FilterValue value){
+                List<Ticket> tickets = new ArrayList<>();
+                ticketRepository.findAll().forEach(ticket -> { // Iterates over repo/database, returns all tickets and adds them to the list
+                        tickets.add(ticket);
+                });
+                int flag = 0;
+
+
+                if (value == FilterValue.OLDEST){
+
+                        tickets.sort((t1, t2) -> {
+                                if (t1.getDateSubmitted().isBefore(t2.getDateSubmitted())) {
+                                        return -1;
+                                } else if (t1.getDateSubmitted().isAfter(t2.getDateSubmitted())) {
+                                        return 1;
+                                } else {
+                                        return 0;
+                                }
+                        });
+
+
+
+                } else if (value == FilterValue.YOUNGEST) {
+
+                        tickets.sort((t1, t2) -> {
+                                if (t1.getDateSubmitted().isAfter(t2.getDateSubmitted())) {
+                                        return -1;
+                                } else if (t1.getDateSubmitted().isBefore(t2.getDateSubmitted())) {
+                                        return 1;
+                                } else {
+                                        return 0;
+                                }
+                        });
+
+                }else if (value == FilterValue.HIGHEST_PRIORITY) {
+
+                        tickets.sort((t1, t2) -> {
+                                if (t1.getPriority().getPriority() > t2.getPriority().getPriority()) {
+                                        return -1;
+                                } else if (t1.getPriority().getPriority() < t2.getPriority().getPriority()) {
+                                        return 1;
+                                } else {
+                                        return 0;
+                                }
+                        });
+
+                }else if (value == FilterValue.LOWEST_PRIORITY) {
+
+                        tickets.sort((t1, t2) -> {
+                                if (t1.getPriority().getPriority() > t2.getPriority().getPriority()) {
+                                        return -1;
+                                } else if (t1.getPriority().getPriority() < t2.getPriority().getPriority()) {
+                                        return 1;
+                                } else {
+                                        return 0;
+                                }
+                        });
+
+                }else if (value == FilterValue.CLOSED) {
+                        flag = 1;
+                        tickets.removeIf( t -> t.getStatus() != StatusUpdates.CLOSED);
+
+                }else {//default list by id
+                        for (Ticket T : ticketRepository.findAll()){
+                                tickets.add(T);
+                        }
+                }
+
+                if (flag == 0){
+                        tickets.removeIf( t -> t.getStatus() == StatusUpdates.CLOSED);
+                }
+                return tickets;
+
+        }
+
+
+        // Get number of ticket entries in database
+        private int getSize(){
+
+                int counter = 0;
+                for ( Ticket t : ticketRepository.findAll()){
+                        counter++;
+                }
+
+                return counter;
         }
 
         // Update a ticket

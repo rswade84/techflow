@@ -178,4 +178,6 @@ public class Ticket extends AbstractEntity {
     public LocalDateTime getStatusLastUpdated() {
         return statusLastUpdated;
     }
+
+
 }
