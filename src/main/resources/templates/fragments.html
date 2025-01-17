@@ -8,7 +8,7 @@
 </head>
 
 <body>
-<header th:fragment="header" class="bg-white p-6 flex items-center justify-between">
+<header th:fragment="header" class="bg-white p-6 flex items-center justify-between min-h-[103px]">
     <div class="flex items-center space-x-6">
         <h1 class="text-4xl font-bold">TechFlow</h1>
 <!--        <th:block th:if="${requestUri != '/'}">-->
@@ -29,7 +29,7 @@
             </li>
         </ul>
         <th:block th:if="${requestUri != '/'}">
-            <div class="text-black font-bold flex-col item-center !ml-2">
+            <div class="text-black font-bold flex-col item-center !ml-3">
                 <img th:src="${profilePicturePath}" alt="Profile Picture"
                      class="w-10 h-10 rounded-full border border-gray-300 object-cover m-auto">
                 <p class="text-[10px] text-center"><span th:text="${name}"></span></p>
