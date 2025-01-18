@@ -39,9 +39,9 @@
             </ul>
 
             <div class="text-black font-bold flex-col item-center !ml-3">
-                <img th:src="${profilePicturePath}" alt="Profile Picture"
-                     class="w-10 h-10 rounded-full border border-gray-300 object-cover m-auto">
-                <p class="text-[10px] text-center"><span th:text="${name}"></span></p>
+                <a href="/manage-account"><img th:src="${profilePicturePath}" alt="Profile Picture"
+                     class="w-10 h-10 rounded-full border border-gray-300 object-cover m-auto"></a>
+                <p class="text-[10px] text-center"><a href="/manage-account"><span th:text="${name}"></span></a></p>
             </div>
         </nav>
     </th:block>
