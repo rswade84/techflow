@@ -9,34 +9,42 @@
 
 <body>
 <header th:fragment="header" class="bg-white p-6 flex items-center justify-between min-h-[103px]">
-    <div class="flex items-center space-x-6">
+    <div class="flex items-center">
         <h1 class="text-4xl font-bold">TechFlow</h1>
-<!--        <th:block th:if="${requestUri != '/'}">-->
-<!--        <div class="text-black font-bold">-->
-<!--            <p>Current User: <span th:text="${name}"></span></p>-->
-<!--        </div>-->
-<!--        </th:block>-->
     </div>
+    <th:block th:if="${requestUri != '/'}">
+        <nav class="flex items-center" th:with="currentStyles=${'border border-gray-500 bg-gray-200'}">
+            <ul class="flex justify-end space-x-5 text-black">
+                <li><a href="/tickets/create"
+                       class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
+                       th:classappend="${requestUri == '/tickets/create'} ? ${currentStyles} : bg-gray-100">Create Ticket</a>
+                </li>
+                <li><a href="/tickets"
+                       class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
+                       th:classappend="${requestUri == '/tickets'} ? ${currentStyles} : bg-gray-100">All Tickets</a></li>
+                <li><a href="/dashboard"
+                       class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none" th:classappend="${requestUri == '/dashboard'} ? ${currentStyles} : bg-gray-100">Dashboard</a>
+                </li>
+<!--                <li><a href="/manage-account"-->
+<!--                       class="bg-gray-300 hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">Manage-->
+<!--                    Account</a></li>-->
+<!--                <li>-->
+                    <form th:action="@{/logout}" method="post" class="mt-[-6px]">
+                        <button type="submit"
+                                class="text-white bg-gray-900 hover:bg-gray-600 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-[0.516rem] focus:outline-none">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
 
-    <nav class="flex items-center space-x-6">
-        <ul class="flex justify-end space-x-6 text-black">
-            <li><a href="/" class="hover:text-green-400">Home</a></li>
-            <li><a href="/manage-account" class="hover:text-green-400">Manage Account</a></li>
-            <li>
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit">Logout</button>
-                </form>
-            </li>
-        </ul>
-        <th:block th:if="${requestUri != '/'}">
             <div class="text-black font-bold flex-col item-center !ml-3">
                 <img th:src="${profilePicturePath}" alt="Profile Picture"
                      class="w-10 h-10 rounded-full border border-gray-300 object-cover m-auto">
                 <p class="text-[10px] text-center"><span th:text="${name}"></span></p>
             </div>
-
-        </th:block>
-    </nav>
+        </nav>
+    </th:block>
 </header>
 </body>
 
