@@ -31,17 +31,23 @@ public class ListTicketsController {
         @Autowired
         private TicketService ticketService;
 
+
         // List all tickets
+
         @GetMapping
-        public String listTickets(Model model) {
-                List<Ticket> tickets = ticketService.getAllTickets();
+        public String listTickets(Model model, @RequestParam(name = "sortBy", required = false, defaultValue = "Default") String sortBy ) {
+
+                List<Ticket> tickets = ticketService.getTicketList(sortBy);
                 if (tickets == null) {
                         tickets = new ArrayList<>(); // Handle null by initializing an empty list
                 }
-                model.addAttribute("tickets", tickets);
-                return "tickets/list";
-        }
 
+                model.addAttribute("tickets", tickets);
+                model.addAttribute("sortBy", sortBy);
+                model.addAttribute("sortOptions",  ticketService.sortOptions);
+
+                return "/tickets/list";
+        }
 
         // Display the form to create a new ticket
         @GetMapping("/create")
@@ -56,7 +62,18 @@ public class ListTicketsController {
                 return "tickets/create";
         }
 
-        // Display edit form for existing ticket
+        @PostMapping("/close/{ticketId}")
+        public String closeTicket(@PathVariable Integer ticketId) {
+                try {
+                        ticketService.closeTicket(ticketId);
+                        return "redirect:/tickets";
+                } catch (TicketNotFoundException e) {
+                        return "redirect:/tickets";
+                }
+        }
+
+
+                // Display edit form for existing ticket
         @GetMapping("/edit/{ticketId}")
         public String showEditForm(@PathVariable Integer ticketId, Model model) {
                 // Using optional for cases of if the ticket does not exist

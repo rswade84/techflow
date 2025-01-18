@@ -26,6 +26,8 @@ public class TicketService {
                 this.ticketRepository = ticketRepository;
         }
 
+        public List<String> sortOptions = List.of("Default","Oldest First", "Newest First", "Highest First","Lowest First","Closed Tickets");
+
         // Create a new ticket
         public Ticket createTicket(Ticket ticket) {
                 return ticketRepository.save(ticket);
@@ -37,7 +39,93 @@ public class TicketService {
                 ticketRepository.findAll().forEach(ticket -> { // Iterates over repo/database, returns all tickets and adds them to the list
                         tickets.add(ticket);
                 });
+
                 return tickets;
+        }
+
+        // Sort ticket list
+
+        public List<Ticket> getTicketList(String value){
+                List<Ticket> tickets = new ArrayList<>();
+                ticketRepository.findAll().forEach(ticket -> { // Iterates over repo/database, returns all tickets and adds them to the list
+                        tickets.add(ticket);
+                });
+                int flag = 0;
+
+
+                if (value.equals("Oldest First")){
+
+                        tickets.sort((t1, t2) -> {
+                                if (t1.getDateSubmitted().isBefore(t2.getDateSubmitted())) {
+                                        return -1;
+                                } else if (t1.getDateSubmitted().isAfter(t2.getDateSubmitted())) {
+                                        return 1;
+                                } else {
+                                        return 0;
+                                }
+                        });
+
+
+
+                } else if (value.equals("Newest First")) {
+
+                        tickets.sort((t1, t2) -> {
+                                if (t1.getDateSubmitted().isAfter(t2.getDateSubmitted())) {
+                                        return -1;
+                                } else if (t1.getDateSubmitted().isBefore(t2.getDateSubmitted())) {
+                                        return 1;
+                                } else {
+                                        return 0;
+                                }
+                        });
+
+                }else if (value.equals("Highest First")) {
+
+                        tickets.sort((t1, t2) -> {
+                                if (t1.getPriority().getPriority() > t2.getPriority().getPriority()) {
+                                        return -1;
+                                } else if (t1.getPriority().getPriority() < t2.getPriority().getPriority()) {
+                                        return 1;
+                                } else {
+                                        return 0;
+                                }
+                        });
+
+                }else if (value.equals( "Lowest First")) {
+
+                        tickets.sort((t1, t2) -> {
+                                if (t1.getPriority().getPriority() < t2.getPriority().getPriority()) {
+                                        return -1;
+                                } else if (t1.getPriority().getPriority() > t2.getPriority().getPriority()) {
+                                        return 1;
+                                } else {
+                                        return 0;
+                                }
+                        });
+
+                }else if (value.equals("Closed Tickets")) {
+                        flag = 1;
+                        tickets.removeIf( t -> t.getStatus() != StatusUpdates.CLOSED);
+
+                }
+
+                if (flag == 0){
+                        tickets.removeIf( t -> t.getStatus() == StatusUpdates.CLOSED);
+                }
+                return tickets;
+
+        }
+
+
+        // Get number of ticket entries in database
+        private int getSize(){
+
+                int counter = 0;
+                for ( Ticket t : ticketRepository.findAll()){
+                        counter++;
+                }
+
+                return counter;
         }
 
         // Update a ticket
@@ -49,8 +137,9 @@ public class TicketService {
         }
 
         // Delete a ticket
-        public void deleteTicket(Integer ticketId) {
-                ticketRepository.deleteById(ticketId);
+        public void closeTicket(Integer ticketId) {
+                updateTicketStatus(ticketId,StatusUpdates.CLOSED);
+
         }
 
         // Update ticket status
@@ -158,16 +247,19 @@ public class TicketService {
                 switch (currentStatus) { // Evaluates the current ticket status
                         case NOT_STARTED: // If the current status is NOT_STARTED
                                 // Only allows transition to IN_PROGRESS
-                                return newStatus == StatusUpdates.IN_PROGRESS; // This updates the status to IN_PROGRESS
+                                return newStatus == StatusUpdates.CLOSED ||
+                                        newStatus == StatusUpdates.IN_PROGRESS; // This updates the status to IN_PROGRESS
 
                         // Only 2 possible transitions from IN_PROGRESS. Either its DELAYED, or RESOLVED
                         case IN_PROGRESS:
-                                return newStatus == StatusUpdates.DELAYED ||
+                                return newStatus == StatusUpdates.CLOSED ||
+                                        newStatus == StatusUpdates.DELAYED ||
                                         newStatus == StatusUpdates.RESOLVED; // OPTIONS: Moves ticket to DELAYED or RESOLVED
 
                         // Only 2 possible transitions from DELAYED. Either its IN_PROGRESS, or RESOLVED
                         case DELAYED:
-                                return newStatus == StatusUpdates.IN_PROGRESS ||
+                                return newStatus == StatusUpdates.CLOSED ||
+                                        newStatus == StatusUpdates.IN_PROGRESS ||
                                         newStatus == StatusUpdates.RESOLVED; // OPTIONS: Moves ticket to IN_PROGRESS or RESOLVED
 
                         // Added StatusUpdates.RESOLVED because ticket may need to be re-opened by user
