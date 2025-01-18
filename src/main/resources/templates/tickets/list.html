@@ -33,9 +33,23 @@
 */-->
 
 <!-- Link to create new ticket -->
+<div class="flex items-center space-x-4">
 <a th:href="@{/tickets/create}" class="bg-blue-500 text-white p-2 rounded mb-4 inline-block">
     Create New Ticket
 </a>
+
+
+<!-- Sorting Dropdown -->
+<form th:action="@{/tickets}" method="get">
+    <select id="sortBy" name="sortBy" th:value="${sortBy}" class="outline outline-offset-0 outline-2 outline-blue-500 bg-white text-black p-2 rounded mb-4 inline-block" onchange="this.form.submit()">
+        <option value="" disabled selected>Sort By</option>
+        <option th:each="option : ${sortOptions}"
+                th:value="${option}"
+                th:text="${option}"></option>
+    </select>
+</form>
+</div>
+
 
 <!-- Table that takes full width with border -->
 <table class="w-full border">
@@ -82,11 +96,23 @@
         </td>
         <td class="p-2" th:text="${ticket.getDateString(ticket.dateSubmitted)}">Date</td>
         <td class="p-2">
+            <div class="flex items-center space-x-4">
             <!-- UPDATE - Removed delete form and kept only edit button -->
             <a th:href="@{/tickets/edit/{id}(id=${ticket.ticketId})}"
                class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
                 Edit/Update Ticket
             </a>
+
+            <form th:action="@{/tickets/close/{id}(id=${ticket.ticketId})}"
+                  method="POST"
+                  class="inline"
+                  onsubmit="return confirm('Are you sure you want to close this ticket?');">
+                <button type="submit"
+                        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                    Close Ticket
+                </button>
+            </form>
+            </div>
         </td>
     </tr>
     </tbody>

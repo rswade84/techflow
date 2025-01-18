@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.taskntech.tech_flow.data.TicketRepository;
 import org.taskntech.tech_flow.exceptions.TicketNotFoundException;
-import org.taskntech.tech_flow.models.FilterValue;
 import org.taskntech.tech_flow.models.PriorityValue;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
@@ -27,6 +26,8 @@ public class TicketService {
                 this.ticketRepository = ticketRepository;
         }
 
+        public List<String> sortOptions = List.of("Default","Oldest First", "Newest First", "Highest First","Lowest First","Closed Tickets");
+
         // Create a new ticket
         public Ticket createTicket(Ticket ticket) {
                 return ticketRepository.save(ticket);
@@ -39,14 +40,12 @@ public class TicketService {
                         tickets.add(ticket);
                 });
 
-                tickets.removeIf( t -> t.getStatus() == StatusUpdates.CLOSED);
-
                 return tickets;
         }
 
         // Sort ticket list
 
-        public List<Ticket> getTicketList(FilterValue value){
+        public List<Ticket> getTicketList(String value){
                 List<Ticket> tickets = new ArrayList<>();
                 ticketRepository.findAll().forEach(ticket -> { // Iterates over repo/database, returns all tickets and adds them to the list
                         tickets.add(ticket);
@@ -54,7 +53,7 @@ public class TicketService {
                 int flag = 0;
 
 
-                if (value == FilterValue.OLDEST){
+                if (value.equals("Oldest First")){
 
                         tickets.sort((t1, t2) -> {
                                 if (t1.getDateSubmitted().isBefore(t2.getDateSubmitted())) {
@@ -68,7 +67,7 @@ public class TicketService {
 
 
 
-                } else if (value == FilterValue.YOUNGEST) {
+                } else if (value.equals("Newest First")) {
 
                         tickets.sort((t1, t2) -> {
                                 if (t1.getDateSubmitted().isAfter(t2.getDateSubmitted())) {
@@ -80,7 +79,7 @@ public class TicketService {
                                 }
                         });
 
-                }else if (value == FilterValue.HIGHEST_PRIORITY) {
+                }else if (value.equals("Highest First")) {
 
                         tickets.sort((t1, t2) -> {
                                 if (t1.getPriority().getPriority() > t2.getPriority().getPriority()) {
@@ -92,26 +91,22 @@ public class TicketService {
                                 }
                         });
 
-                }else if (value == FilterValue.LOWEST_PRIORITY) {
+                }else if (value.equals( "Lowest First")) {
 
                         tickets.sort((t1, t2) -> {
-                                if (t1.getPriority().getPriority() > t2.getPriority().getPriority()) {
+                                if (t1.getPriority().getPriority() < t2.getPriority().getPriority()) {
                                         return -1;
-                                } else if (t1.getPriority().getPriority() < t2.getPriority().getPriority()) {
+                                } else if (t1.getPriority().getPriority() > t2.getPriority().getPriority()) {
                                         return 1;
                                 } else {
                                         return 0;
                                 }
                         });
 
-                }else if (value == FilterValue.CLOSED) {
+                }else if (value.equals("Closed Tickets")) {
                         flag = 1;
                         tickets.removeIf( t -> t.getStatus() != StatusUpdates.CLOSED);
 
-                }else {//default list by id
-                        for (Ticket T : ticketRepository.findAll()){
-                                tickets.add(T);
-                        }
                 }
 
                 if (flag == 0){
@@ -142,8 +137,9 @@ public class TicketService {
         }
 
         // Delete a ticket
-        public void deleteTicket(Integer ticketId) {
-                ticketRepository.deleteById(ticketId);
+        public void closeTicket(Integer ticketId) {
+                updateTicketStatus(ticketId,StatusUpdates.CLOSED);
+
         }
 
         // Update ticket status
@@ -251,16 +247,19 @@ public class TicketService {
                 switch (currentStatus) { // Evaluates the current ticket status
                         case NOT_STARTED: // If the current status is NOT_STARTED
                                 // Only allows transition to IN_PROGRESS
-                                return newStatus == StatusUpdates.IN_PROGRESS; // This updates the status to IN_PROGRESS
+                                return newStatus == StatusUpdates.CLOSED ||
+                                        newStatus == StatusUpdates.IN_PROGRESS; // This updates the status to IN_PROGRESS
 
                         // Only 2 possible transitions from IN_PROGRESS. Either its DELAYED, or RESOLVED
                         case IN_PROGRESS:
-                                return newStatus == StatusUpdates.DELAYED ||
+                                return newStatus == StatusUpdates.CLOSED ||
+                                        newStatus == StatusUpdates.DELAYED ||
                                         newStatus == StatusUpdates.RESOLVED; // OPTIONS: Moves ticket to DELAYED or RESOLVED
 
                         // Only 2 possible transitions from DELAYED. Either its IN_PROGRESS, or RESOLVED
                         case DELAYED:
-                                return newStatus == StatusUpdates.IN_PROGRESS ||
+                                return newStatus == StatusUpdates.CLOSED ||
+                                        newStatus == StatusUpdates.IN_PROGRESS ||
                                         newStatus == StatusUpdates.RESOLVED; // OPTIONS: Moves ticket to IN_PROGRESS or RESOLVED
 
                         // Added StatusUpdates.RESOLVED because ticket may need to be re-opened by user
