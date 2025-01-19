@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
- * Model is a interface that is used to add data to the model.
+ * Model is an interface that is used to add data to the model.
  * @PathVariable = is used to bind the URL path variable to a method parameter.
  * @Valid = is used to validate the object before saving it to the database.
  * @ModelAttribute = is used to bind the form data to a model object.
