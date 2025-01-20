@@ -3,103 +3,106 @@
 <head th:replace="fragments :: head">
     <title>Edit Ticket</title>
 </head>
-<body class="p-8">
+<body class="bg-gray-200 font-sans">
+<header th:replace="fragments.html :: header"></header>
 
-<h1 class="text-xl mb-4">Edit Ticket</h1>
+<div class="p-8">
+    <h1 class="text-xl mb-4">Edit Ticket</h1>
 
-<!--/*
-  p-2 = padding
-  w-full = width
-  mb-4 = margin bottom
-  th:text = binds text
-  th:value = binds value
-  th:field = binds ticket properties to form fields
-  th:action = form action
-  th:class = add class
-  th:attr = add attribute
-  th:each = loop
-  th:replace = replace
-  td: = table data
-  tr: = table row
-  thead: = table header
-*/-->
+    <!--/*
+      p-2 = padding
+      w-full = width
+      mb-4 = margin bottom
+      th:text = binds text
+      th:value = binds value
+      th:field = binds ticket properties to form fields
+      th:action = form action
+      th:class = add class
+      th:attr = add attribute
+      th:each = loop
+      th:replace = replace
+      td: = table data
+      tr: = table row
+      thead: = table header
+    */-->
 
-<!-- Form is using max width -->
-<form method="POST" th:action="@{/tickets/edit/{id}(id=${ticket.ticketId})}" th:object="${ticket}" class="max-w-lg">
+    <!-- Form is using max width -->
+    <form method="POST" th:action="@{/tickets/edit/{id}(id=${ticket.ticketId})}" th:object="${ticket}" class="max-w-lg">
 
-    <div th:if="${#fields.hasErrors('*')}">
-        <ul>
-            <li th:each="err : ${#fields.errors('*')}" th:text="${err}" class="text-red-600" />
-        </ul>
-    </div>
+        <div th:if="${#fields.hasErrors('*')}">
+            <ul>
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}" class="text-red-600" />
+            </ul>
+        </div>
 
-    <!-- If theres an error, display message -->
-    <div th:if="${errorMessage}" class="bg-red-100 border border-red-500 text-red-700 p-3 rounded mb-4"
-         th:text="${errorMessage}"></div>
+        <!-- If theres an error, display message -->
+        <div th:if="${errorMessage}" class="bg-red-100 border border-red-500 text-red-700 p-3 rounded mb-4"
+             th:text="${errorMessage}"></div>
 
-    <table class="w-full border">
-        <tr>
-            <th class="p-2"><label for="name">Name</label></th>
-            <td class="p-2">
-                <input id="name" class="w-full p-2 border rounded" type="text" th:field="*{name}" required>
-            </td>
-        </tr>
-        <tr>
-            <th class="p-2"><label for="email">Email</label></th>
-            <td class="p-2">
-                <input id="email" class="w-full p-2 border rounded" type="email" th:field="*{email}" required>
-            </td>
-        </tr>
-        <tr>
-            <th class="p-2"><label for="details">Details</label></th>
-            <td class="p-2">
-                <textarea id="details" class="w-full p-2 border rounded" th:field="*{details}" required></textarea>
-            </td>
-        </tr>
-        <tr>
-            <th class="p-2"><label for="priority">Priority</label></th>
-            <td class="p-2">
-                <select id="priority" class="w-full p-2 border rounded" th:field="*{priority}" required>
-                    <option th:each="priorityOpt : ${priorityValues}"
-                            th:value="${priorityOpt}"
-                            th:text="${priorityOpt}">
-                    </option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th class="p-2"><label for="status">Status</label></th>
-            <td class="p-2">
-                <select id="status" class="w-full p-2 border rounded" th:field="*{status}" required>
-                    <option th:each="statusOpt : ${statusValues}"
-                            th:value="${statusOpt.name()}"
-                            th:text="${statusOpt.displayStatus}">
-                    </option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th class="p-2"><label for="department">Department</label></th>
-            <td class="p-2">
-                <input id="department" class="w-full p-2 border rounded" type="text" th:field="*{clientDepartment}" required>
-            </td>
-        </tr>
-        <tr>
-            <th class="p-2"><label for="notes">Internal Notes</label></th>
-            <td class="p-2">
+        <table class="w-full border border-gray-500">
+            <tr>
+                <th class="p-2"><label for="name">Name</label></th>
+                <td class="p-2">
+                    <input id="name" class="w-full p-2 border rounded border-gray-500" type="text" th:field="*{name}" required>
+                </td>
+            </tr>
+            <tr>
+                <th class="p-2"><label for="email">Email</label></th>
+                <td class="p-2">
+                    <input id="email" class="w-full p-2 border rounded border-gray-500" type="email" th:field="*{email}" required>
+                </td>
+            </tr>
+            <tr>
+                <th class="p-2"><label for="details">Details</label></th>
+                <td class="p-2">
+                    <textarea id="details" class="w-full p-2 border rounded border-gray-500" th:field="*{details}" required></textarea>
+                </td>
+            </tr>
+            <tr>
+                <th class="p-2"><label for="priority">Priority</label></th>
+                <td class="p-2">
+                    <select id="priority" class="w-full p-2 border rounded border-gray-500" th:field="*{priority}" required>
+                        <option th:each="priorityOpt : ${priorityValues}"
+                                th:value="${priorityOpt}"
+                                th:text="${priorityOpt}">
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="p-2"><label for="status">Status</label></th>
+                <td class="p-2">
+                    <select id="status" class="w-full p-2 border rounded border-gray-500" th:field="*{status}" required>
+                        <option th:each="statusOpt : ${statusValues}"
+                                th:value="${statusOpt.name()}"
+                                th:text="${statusOpt.displayStatus}">
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="p-2"><label for="department">Department</label></th>
+                <td class="p-2">
+                    <input id="department" class="w-full p-2 border rounded border-gray-500" type="text" th:field="*{clientDepartment}" required>
+                </td>
+            </tr>
+            <tr>
+                <th class="p-2"><label for="notes">Internal Notes</label></th>
+                <td class="p-2">
                 <textarea id="notes"
-                          class="w-full p-2 border rounded h-32"
+                          class="w-full p-2 border rounded border-gray-500 h-32"
                           th:field="*{notes}"
                           placeholder="Add internal notes here..."></textarea>
-            </td>
-        </tr>
-    </table>
+                </td>
+            </tr>
+        </table>
 
-    <!-- Buttons -->
-    <div class="mt-4">
-        <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 inline-block">Update Ticket</button>
-        <a href="/tickets" class="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 ml-2 inline-block">Cancel</a>
-    </div>
-</form>
+        <!-- Buttons -->
+        <div class="mt-4">
+            <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 inline-block">Update Ticket</button>
+            <a href="/tickets" class="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 ml-2 inline-block">Cancel</a>
+        </div>
+    </form>
+</div>
 </body>
 </html>
