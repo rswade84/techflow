@@ -20,6 +20,8 @@
   th:each = loop
   th:replace = replace
   td: = table data
+  tr: = table row
+  thead: = table header
 */-->
 
 <!--/*
@@ -66,6 +68,7 @@
         <th class="p-2 w-24 text-left">Priority</th>
         <th class="p-2 w-28 text-left">Status</th>
         <th class="p-2 w-32 text-left">Date Submitted</th>
+        <th class="p-2 w-40 text-left">Internal Notes</th>
         <th class="p-2 w-32 text-left">Actions</th>
     </tr>
     </thead>
@@ -95,8 +98,17 @@
                 Status
             </span>
         </td>
+
+        <!-- UPDATE - Added Notes Preview Column -->
         <td class="p-2" th:text="${ticket.getDateString(ticket.dateSubmitted)}">Date</td>
         <td class="p-2">
+                    <span class="text-sm" th:text="${#strings.abbreviate(ticket.notes ?: 'No notes', 50)}">
+            Notes preview
+        </span>
+        </td>
+
+        <td class="p-2">
+
             <div class="flex items-center space-x-4">
             <!-- UPDATE - Removed delete form and kept only edit button -->
             <a th:href="@{/tickets/edit/{id}(id=${ticket.ticketId})}"
