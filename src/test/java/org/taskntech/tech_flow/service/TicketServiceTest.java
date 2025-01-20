@@ -11,6 +11,7 @@ import org.taskntech.tech_flow.data.TicketRepository;
 import org.taskntech.tech_flow.models.PriorityValue;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
+import org.taskntech.tech_flow.exceptions.TicketNotFoundException;
 
 import java.util.Optional;
 
@@ -75,6 +76,31 @@ public class TicketServiceTest {
                 assertTrue(ticketService.isValidStatusTransition(StatusUpdates.IN_PROGRESS, StatusUpdates.RESOLVED));
                 assertTrue(ticketService.isValidStatusTransition(StatusUpdates.RESOLVED, StatusUpdates.CLOSED));
                 assertFalse(ticketService.isValidStatusTransition(StatusUpdates.CLOSED, StatusUpdates.IN_PROGRESS));
+        }
+
+        @Test
+        void addOrUpdateNote_ShouldUpdateNote() {
+                // Arrange
+                String newNote = "Important update regarding ticket";
+                when(ticketRepository.findById(1)).thenReturn(Optional.of(testTicket));
+                when(ticketRepository.save(any(Ticket.class))).thenReturn(testTicket);
+
+                // Act
+                Ticket updatedTicket = ticketService.addOrUpdateNote(1, newNote);
+
+                // Assert
+                assertEquals(newNote, updatedTicket.getNotes());
+        }
+
+        @Test
+        void addOrUpdateNote_ShouldThrowExceptionForNonexistentTicket() {
+                // Arrange
+                when(ticketRepository.findById(999)).thenReturn(Optional.empty());
+
+                // Act & Assert
+                assertThrows(TicketNotFoundException.class, () -> {
+                        ticketService.addOrUpdateNote(999, "New note");
+                });
         }
 
 }
