@@ -134,9 +134,7 @@ public class ListTicketsController {
                         Ticket currentTicket = ticketService.findTicketById(ticketId);
 
                         // If notes have changed, update them separately
-                        // Using Objects.equals to compare (currentTick and ticket)
                         if (currentTicket != null && !Objects.equals(currentTicket.getNotes(), ticket.getNotes())) {
-                                // Then update the notes
                                 ticketService.addOrUpdateNote(ticketId, ticket.getNotes());
                         }
 
