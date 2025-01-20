@@ -33,7 +33,6 @@ public class ListTicketsController {
 
 
         // List all tickets
-
         @GetMapping
         public String listTickets(Model model, @RequestParam(name = "sortBy", required = false, defaultValue = "Default") String sortBy ) {
 
