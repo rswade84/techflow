@@ -47,13 +47,11 @@ public class Ticket extends AbstractEntity {
 
     //NO declarative are needed
     //Going to switch to java.sql.timestamp
-    private LocalDateTime dateSubmitted;
+    private final LocalDateTime dateSubmitted;
 
     @NotBlank
     @Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
     private String clientDepartment;
-
-
 
     //edit after core features are done
     private String notes;
@@ -67,7 +65,7 @@ public class Ticket extends AbstractEntity {
         this.status = StatusUpdates.NOT_STARTED;  // Initialize status
         this.previousStatus = null;               // Initialize previousStatus
         this.statusLastUpdated = LocalDateTime.now(); // Initialize statusLastUpdated
-        setDateSubmitted();
+        this.dateSubmitted = LocalDateTime.now();
     }
 
     // Added a No-argument constructor
@@ -78,7 +76,7 @@ public class Ticket extends AbstractEntity {
         this.status = StatusUpdates.NOT_STARTED;
         this.previousStatus = null; // Initialize previousStatus to null when creating a new ticket for the first time
         this.statusLastUpdated = LocalDateTime.now(); // Initialize statusLastUpdated to the current timestamp
-        setDateSubmitted();
+        this.dateSubmitted = LocalDateTime.now();
     }
 
 
@@ -123,11 +121,7 @@ public class Ticket extends AbstractEntity {
         return dateSubmitted;
     }
 
-    private void setDateSubmitted() {
-        this.dateSubmitted = LocalDateTime.now();
-    }
-
-    // UPDATE - to hande null dates
+    // UPDATE - to handle null dates
     public String getDateString(LocalDateTime date) {
         if (date == null) { // check if the date is null
             return "N/A";
@@ -149,7 +143,6 @@ public class Ticket extends AbstractEntity {
     }
 
     public void setLastEdited() {
-
         this.lastEdited= LocalDateTime.now();
     }
 
@@ -178,6 +171,4 @@ public class Ticket extends AbstractEntity {
     public LocalDateTime getStatusLastUpdated() {
         return statusLastUpdated;
     }
-
-
 }
