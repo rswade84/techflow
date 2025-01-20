@@ -15,6 +15,7 @@ import org.taskntech.tech_flow.service.TicketService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /*
  * Model is an interface that is used to add data to the model.
@@ -131,6 +132,13 @@ public class ListTicketsController {
 
                         // Get current ticket first
                         Ticket currentTicket = ticketService.findTicketById(ticketId);
+
+                        // If notes have changed, update them separately
+                        // Using Objects.equals to compare (currentTick and ticket)
+                        if (currentTicket != null && !Objects.equals(currentTicket.getNotes(), ticket.getNotes())) {
+                                // Then update the notes
+                                ticketService.addOrUpdateNote(ticketId, ticket.getNotes());
+                        }
 
                         ticketService.updateTicket(ticket);
                         return "redirect:/tickets";
