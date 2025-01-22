@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
                     auth.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll();
-                    auth.requestMatchers("/", "/login", "/error").permitAll();
+                    auth.requestMatchers("/", "/login", "/error", "/ws/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .oauth2Login(form -> form
