@@ -22,6 +22,8 @@
   th:each = loop
   th:replace = replace
   td: = table data
+  tr: = table row
+  thead = table header
 */-->
 
 <form th:action="@{/tickets/create}" th:object="${ticket}" method="POST" class="max-w-lg">

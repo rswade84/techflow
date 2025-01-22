@@ -33,17 +33,18 @@ class ListTicketsControllerTest {
         @InjectMocks
         private ListTicketsController controller;
 
+        // UPDATED: Changed method to match controller's signature and use getTicketList instead of getAllTickets
         @Test
         public void listTicketsShouldReturnViewWithTickets() {
                 // Arrange: Mock the behavior of ticketService to return an empty list of tickets
                 List<Ticket> tickets = new ArrayList<>();
-                when(ticketService.getAllTickets()).thenReturn(tickets);
+                when(ticketService.getTicketList("Default")).thenReturn(tickets);
 
-                // Act: Call the method under test
-                String result = controller.listTickets(model);
+                // Act: Call the method under test with sortBy parameter
+                String result = controller.listTickets(model, "Default");
 
                 // Assert: Verify the method returns the correct view name
-                assertEquals("tickets/list", result, "Should return view with tickets");
+                assertEquals("/tickets/list", result, "Should return view with tickets");
         }
 
         @Test
@@ -92,16 +93,17 @@ class ListTicketsControllerTest {
                 assertEquals("tickets/create", result, "Should return create view when validation fails");
         }
 
+        // UPDATED: Changed method to match controller's signature and use getTicketList instead of getAllTickets
         @Test
         public void listTicketsShouldHandleNullOrEmptyList() {
                 // Arrange: Simulate ticketService returning null
-                when(ticketService.getAllTickets()).thenReturn(null);
+                when(ticketService.getTicketList("Default")).thenReturn(null);
 
                 // Act
-                String result = controller.listTickets(model);
+                String result = controller.listTickets(model, "Default");
 
                 // Assert
-                assertEquals("tickets/list", result, "Should return tickets list view");
+                assertEquals("/tickets/list", result, "Should return tickets list view");
 
                 // Verify model is populated with an empty list instead of null
                 Mockito.verify(model).addAttribute("tickets", new ArrayList<>());
