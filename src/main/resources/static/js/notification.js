@@ -23,8 +23,7 @@ function displayNotification(notification) {
         notificationDiv.insertBefore(messageElement, notificationDiv.firstChild);
         notificationDiv.classList.remove('hidden');
         messageElement.classList.add('inline');
-         notificationDiv.classList.add('inline');
-        console.log(notification);
+        notificationDiv.classList.add('inline');
     }
 
     function close() {
