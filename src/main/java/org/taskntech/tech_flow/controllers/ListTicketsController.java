@@ -16,9 +16,10 @@ import org.taskntech.tech_flow.controllers.NotificationController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /*
- * Model is a interface that is used to add data to the model.
+ * Model is an interface that is used to add data to the model.
  * @PathVariable = is used to bind the URL path variable to a method parameter.
  * @Valid = is used to validate the object before saving it to the database.
  * @ModelAttribute = is used to bind the form data to a model object.
@@ -131,6 +132,11 @@ public class ListTicketsController {
 
                         // Get current ticket first
                         Ticket currentTicket = ticketService.findTicketById(ticketId);
+
+                        // If notes have changed, update them separately
+                        if (currentTicket != null && !Objects.equals(currentTicket.getNotes(), ticket.getNotes())) {
+                                ticketService.addOrUpdateNote(ticketId, ticket.getNotes());
+                        }
 
                         ticketService.updateTicket(ticket);
 
