@@ -5,6 +5,7 @@
 </head>
 <body class="bg-gray-200 font-sans">
 <header th:replace="fragments.html :: header"></header>
+<div th:replace="fragments.html :: notification"></div>
 
 <div class="p-8">
     <h1 class="text-xl mb-4">Support Tickets</h1>
@@ -127,5 +128,6 @@
         </tbody>
     </table>
 </div>
+<script th:src="@{/js/notification.js}"></script>
 </body>
 </html>

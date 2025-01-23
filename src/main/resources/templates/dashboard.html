@@ -5,7 +5,7 @@
 </head>
 <body class="bg-gray-200 font-sans">
 <header th:replace="fragments.html :: header"></header>
-
+<div th:replace="fragments.html :: notification"></div>
 <div class="flex items-center justify-between p-8">
     <div>
         <h1 class="text-xl">Tickets Analytics Dashboard</h1>
@@ -44,6 +44,6 @@
         <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl"></div>
 
     </div>
-
+<script th:src="@{/js/notification.js}"></script>
 </body>
 </html>
