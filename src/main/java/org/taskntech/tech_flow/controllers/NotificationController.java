@@ -11,8 +11,7 @@ public class NotificationController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    @PostMapping("/sendNotification")
-    public void sendNotification(){
-        messagingTemplate.convertAndSend("topic/notification", "Ticket Updated");
+    public void sendNotification(String message) {
+        messagingTemplate.convertAndSend("/topic/notifications", message);
     }
 }

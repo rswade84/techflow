@@ -35,35 +35,40 @@
             <ul class="flex justify-end space-x-5 text-black">
                 <li><a href="/tickets/create"
                        class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
-                       th:classappend="${requestUri == '/tickets/create'} ? ${currentStyles} : bg-gray-100">Create Ticket</a>
+                       th:classappend="${requestUri == '/tickets/create'} ? ${currentStyles} : bg-gray-100">Create
+                    Ticket</a>
                 </li>
                 <li><a href="/tickets"
                        class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
-                       th:classappend="${requestUri == '/tickets'} ? ${currentStyles} : bg-gray-100">All Tickets</a></li>
+                       th:classappend="${requestUri == '/tickets'} ? ${currentStyles} : bg-gray-100">All Tickets</a>
+                </li>
                 <li><a href="/dashboard"
                        class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
                        th:classappend="${requestUri == '/dashboard'} ? ${currentStyles} : bg-gray-100">Dashboard</a>
                 </li>
-<!--                <li><a href="/manage-account"-->
-<!--                       class="bg-gray-300 hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">Manage-->
-<!--                    Account</a></li>-->
-<!--                <li>-->
-                    <form th:action="@{/logout}" method="post" class="mt-[-6px]">
-                        <button type="submit"
-                                class="text-white bg-gray-900 hover:bg-gray-600 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-[0.516rem] focus:outline-none">
-                            Logout
-                        </button>
-                    </form>
+                <!--                <li><a href="/manage-account"-->
+                <!--                       class="bg-gray-300 hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">Manage-->
+                <!--                    Account</a></li>-->
+                <!--                <li>-->
+                <form th:action="@{/logout}" method="post" class="mt-[-6px]">
+                    <button type="submit"
+                            class="text-white bg-gray-900 hover:bg-gray-600 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-[0.516rem] focus:outline-none">
+                        Logout
+                    </button>
+                </form>
                 </li>
             </ul>
 
             <div data-tooltip-target="tooltip-manage-account" class="text-black font-bold flex-col item-center !ml-3">
                 <a href="/manage-account"><img th:src="${profilePicturePath}" alt="Profile Picture"
-                     class="w-10 h-10 rounded-full border border-gray-300 object-cover m-auto"></a>
+                                               class="w-10 h-10 rounded-full border border-gray-300 object-cover m-auto"></a>
                 <p class="text-[10px] text-center"><a href="/manage-account"><span th:text="${name}"></span></a></p>
-                <div id="tooltip-manage-account" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                <div id="tooltip-manage-account" role="tooltip"
+                     class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
                     Manage Account
+
                     <div class="tooltip-arrow" data-popper-arrow></div>
+                </div>
             </div>
         </nav>
     </th:block>
@@ -76,32 +81,46 @@
         const socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, function () {
-            console.log('Connected to WebSocket');
-            stompClient.subscribe('/topic/messages', function (message) {
-                displayMessage(message.body);
-            });
+        stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/notifications', function (notification) {
+            alert('Notification: ' + notification.body);
         });
-    }
+    });
 
-    function sendMessage() {
-        fetch('/sendMessage', { method: 'POST' });
-    }
+        /*stompClient.connect({}, function () {
+            console.log('Connected to WebSocket');
+        stompClient.subscribe('/topic/notification', function (message) {
+            displayMessage(message.body);
+            console.log('Message received: ', message.body);
+        });
+        },
+        function (error) {
+            console.error('Error connecting to WebSocket: ', error);
+        });
 
-    function displayMessage(message) {
+    } */
+
+
+
+
+    /*function displayMessage(message) {
         const messagesDiv = document.getElementById('messages');
         const messageElement = document.createElement('div');
         messageElement.textContent = message;
         messagesDiv.appendChild(messageElement);
+        console.log(messageElement);
     }
+*/
+/*    const pathname = window.location.pathname;
 
-    const pathname = window.location.pathname;
 
-    if (pathname === 'tickets/edit') {
+   if (pathname === '/tickets/edit') {
+        const form = document.querySelector('form'); // Select your form
+        form.addEventListener('submit', handleFormSubmit);
+    }/*
 
-    document.getElementByTagName('button')[0].addEventListener('click', sendMessage);
 
-    }
 
     connect();
 </script>

@@ -179,5 +179,4 @@ public class Ticket extends AbstractEntity {
         return statusLastUpdated;
     }
 
-
 }

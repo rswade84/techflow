@@ -83,12 +83,12 @@
             </td>
         </tr>
     </table>
-
     <!-- Buttons -->
     <div class="mt-4">
-        <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 inline-block">Update Ticket</button>
+        <button id="update" type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 inline-block">Update Ticket</button>
         <a href="/tickets" class="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 ml-2 inline-block">Cancel</a>
     </div>
 </form>
+<script th:replace="fragments :: ws-notification"></script>
 </body>
 </html>
