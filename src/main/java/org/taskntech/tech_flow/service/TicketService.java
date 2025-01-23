@@ -3,6 +3,7 @@ package org.taskntech.tech_flow.service;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.taskntech.tech_flow.data.TicketRepository;
 import org.taskntech.tech_flow.exceptions.TicketNotFoundException;

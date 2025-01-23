@@ -17,7 +17,7 @@ public class TicketUpdateListener {
     @EventListener
     public void handleTicketUpdatedEvent(TicketUpdatedEvent event){
 
-        String message = "Ticket Updated: " + event.getTicket().toString();
+        String message = "Ticket Updated: ID " + event.getTicket().getTicketId();
         notificationController.sendNotification(message);
 
     }
