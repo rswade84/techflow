@@ -12,6 +12,7 @@ import org.taskntech.tech_flow.models.PriorityValue;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
 import org.taskntech.tech_flow.service.TicketService;
+import org.taskntech.tech_flow.controllers.NotificationController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,6 @@ public class ListTicketsController {
 
         @Autowired
         private TicketService ticketService;
-
 
         // List all tickets
         @GetMapping
@@ -139,6 +139,7 @@ public class ListTicketsController {
                         }
 
                         ticketService.updateTicket(ticket);
+
                         return "redirect:/tickets";
                 } catch (ValidationException ve) {
                         model.addAttribute("errorMessage", "Invalid status transition: " + ve.getMessage());

@@ -2,12 +2,14 @@ package org.taskntech.tech_flow.service;
 
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.taskntech.tech_flow.data.TicketRepository;
 import org.taskntech.tech_flow.exceptions.TicketNotFoundException;
 import org.taskntech.tech_flow.models.PriorityValue;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
+import org.taskntech.tech_flow.notifications.TicketUpdatedEvent;
 
 
 import java.time.LocalDateTime;
@@ -20,6 +22,13 @@ public class TicketService {
 
         @Autowired // Used to inject dependencies
         private TicketRepository ticketRepository; // Used to access the repository
+
+        private final ApplicationEventPublisher eventPublisher;
+
+        // Constructor for injecting ApplicationEventPublisher
+        public TicketService(ApplicationEventPublisher eventPublisher) {
+                this.eventPublisher = eventPublisher;
+        }
 
         // Add setter for testing
         public void setTicketRepository(TicketRepository ticketRepository) {
@@ -128,12 +137,17 @@ public class TicketService {
                 return counter;
         }
 
-        // Update a ticket
+        // Update a ticket and publish a domain event
         public Ticket updateTicket(Ticket ticket) {
-                if (ticketRepository.existsById(ticket.getTicketId())) { // checks if the ticket exists
-                        return ticketRepository.save(ticket); // returns the updated ticket
+                if (ticketRepository.existsById(ticket.getTicketId())) {
+                        Ticket updatedTicket = ticketRepository.save(ticket);
+
+                        // Publish the domain event after saving the ticket
+                        eventPublisher.publishEvent(new TicketUpdatedEvent(updatedTicket));
+
+                        return updatedTicket;
                 }
-                return null; // Or throw exception
+                throw new TicketNotFoundException("Ticket not found with ID: " + ticket.getTicketId());
         }
 
         // Delete a ticket
@@ -166,7 +180,12 @@ public class TicketService {
                         ticket.setStatusLastUpdated(LocalDateTime.now());
                         ticket.setLastEdited();
 
-                        return ticketRepository.save(ticket);
+                        Ticket updatedTicket = ticketRepository.save(ticket);
+
+                        // Publish a domain event
+                        eventPublisher.publishEvent(new TicketUpdatedEvent(updatedTicket));
+
+                        return updatedTicket;
                 } else {
                         throw new TicketNotFoundException("Ticket not found with ID: " + ticketId);
                 }
