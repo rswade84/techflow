@@ -75,54 +75,17 @@
 </header>
 
 <script th:fragment="ws-notification">
-    let stompClient = null;
+    const socket = new SockJS('/ws');
+    const stompClient = Stomp.over(socket);
 
-    function connect() {
-        const socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-
-        stompClient.connect({}, function (frame) {
+    stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/notifications', function (notification) {
             alert('Notification: ' + notification.body);
         });
     });
 
-        /*stompClient.connect({}, function () {
-            console.log('Connected to WebSocket');
-        stompClient.subscribe('/topic/notification', function (message) {
-            displayMessage(message.body);
-            console.log('Message received: ', message.body);
-        });
-        },
-        function (error) {
-            console.error('Error connecting to WebSocket: ', error);
-        });
 
-    } */
-
-
-
-
-    /*function displayMessage(message) {
-        const messagesDiv = document.getElementById('messages');
-        const messageElement = document.createElement('div');
-        messageElement.textContent = message;
-        messagesDiv.appendChild(messageElement);
-        console.log(messageElement);
-    }
-*/
-/*    const pathname = window.location.pathname;
-
-
-   if (pathname === '/tickets/edit') {
-        const form = document.querySelector('form'); // Select your form
-        form.addEventListener('submit', handleFormSubmit);
-    }/*
-
-
-
-    connect();
 </script>
 
 </body>
