@@ -5,6 +5,9 @@
 </head>
 <body class="bg-gray-200 font-sans">
 <header th:replace = "fragments.html :: header"></header>
+<div id="notification" class="hidden absolute left-[10px] bg-orange-500">
+    <button id="notification-close" class="border border-black leading-none">X</button>
+</div>
 <div class="my-20 max-w-lg pl-8">
 <!--    items-center flex flex-col-->
 <h1 class="text-xl mb-4">Create New Ticket</h1>
@@ -86,7 +89,6 @@
     </div>
 </form>
 </div>
-<div id="messages"></div>
 <script th:replace="fragments :: ws-notification"></script>
 </body>
 </html>
