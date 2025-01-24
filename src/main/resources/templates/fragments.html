@@ -14,11 +14,11 @@
 <body>
 <!--<header th:fragment="header" class="bg-white p-6 flex items-center justify-between min-h-[103px]">-->
 <header th:fragment="header" class="bg-white p-6 min-h-[103px]">
-    <div class="flex items-center float-left">
+    <div class="flex items-center float-left pt-[6px]">
         <h1 class="text-4xl font-bold">TechFlow</h1>
     </div>
     <th:block th:if="${requestUri != '/'}">
-        <nav class="flex items-center justify-end" th:with="currentStyles=${'border border-gray-500 bg-gray-200'}">
+        <nav class="flex flex-wrap items-center justify-end" th:with="currentStyles=${'border border-gray-500 bg-gray-200'}">
             <button data-collapse-toggle="navbar-default" type="button"
                     class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                     aria-controls="navbar-default" aria-expanded="false">
@@ -32,25 +32,26 @@
             <div class="hidden w-full md:contents md:w-auto" id="navbar-default">
                 <ul class="flex flex-col md:flex-row justify-end md:space-x-5 text-black">
                     <li><a href="/tickets/create"
-                           class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
+                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
                            th:classappend="${requestUri == '/tickets/create'} ? ${currentStyles} : bg-gray-100">Create
                         Ticket</a>
                     </li>
                     <li><a href="/tickets"
-                           class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
+                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
                            th:classappend="${requestUri == '/tickets'} ? ${currentStyles} : bg-gray-100">All Tickets</a>
                     </li>
                     <li><a href="/dashboard"
-                           class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
+                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
                            th:classappend="${requestUri == '/dashboard'} ? ${currentStyles} : bg-gray-100">Dashboard</a>
                     </li>
                     <!--                <li><a href="/manage-account"-->
                     <!--                       class="bg-gray-300 hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">Manage-->
                     <!--                    Account</a></li>-->
                     <!--                <li>-->
-                    <form th:action="@{/logout}" method="post" class="mt-[-6px]">
+                    <li>
+                    <form th:action="@{/logout}" method="post" class="mt-[1px]">
                         <button type="submit"
-                                class="text-white bg-gray-900 hover:bg-gray-600 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-[0.516rem] focus:outline-none">
+                                class="text-white bg-gray-900 hover:bg-gray-600 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">
                             Logout
                         </button>
                     </form>
