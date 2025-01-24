@@ -104,6 +104,7 @@ public class ListTicketsController {
 
                 try {
                         ticketService.createTicket(ticket);
+                        ticketService.addRecentActivity(0, ticket);
                         return "redirect:/tickets";
                 } catch (ValidationException e) {
                         model.addAttribute("priorityValues", PriorityValue.values());
@@ -136,6 +137,29 @@ public class ListTicketsController {
                         // If notes have changed, update them separately
                         if (currentTicket != null && !Objects.equals(currentTicket.getNotes(), ticket.getNotes())) {
                                 ticketService.addOrUpdateNote(ticketId, ticket.getNotes());
+
+                                //update recent activity log
+                                ticketService.addRecentActivity(4,ticket);
+                        }
+
+                        //update recent activity log if status has changed
+                        if (currentTicket != null && !Objects.equals(currentTicket.getStatus(), ticket.getStatus())) {
+                                ticketService.addRecentActivity(2,ticket);
+
+                        }
+                        //update recent activity log if priority has changed
+                        if (currentTicket != null && !Objects.equals(currentTicket.getPriority(), ticket.getPriority())) {
+                                ticketService.addRecentActivity(3,ticket);
+
+                        }
+
+                        //update recent activity log if anything else has changed
+                        if (currentTicket != null && (!Objects.equals(currentTicket.getName(), ticket.getName()) ||
+                                !Objects.equals(currentTicket.getEmail(), ticket.getEmail()) ||
+                                !Objects.equals(currentTicket.getDetails(), ticket.getDetails()) ||
+                                !Objects.equals(currentTicket.getClientDepartment(), ticket.getClientDepartment()))){
+
+                                ticketService.addRecentActivity(1,ticket);
                         }
 
                         ticketService.updateTicket(ticket);
