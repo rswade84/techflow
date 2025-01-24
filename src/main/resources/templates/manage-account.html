@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-gray-200 font-sans">
+<header th:replace="fragments.html :: header"></header>
+<div th:replace="fragments.html :: notification"></div>
+<main class="m-auto my-20 max-w-lg p-10 bg-white rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold mb-6">Manage Your Account</h1>
+    <form th:action="@{/manage-account/update}" method="post" class="mb-8">
+        <div class="mb-4">
+            <label for="displayName" class="block text-gray-700 font-medium">Display Name</label>
+            <input type="text" id="displayName" name="displayName" th:value="${name}"
+                   class="mt-2 w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400" required>
+        </div>
+        <button type="submit"
+                class="bg-green-500 text-white font-bold px-4 py-2 rounded hover:bg-green-600">
+            Update Display Name
+        </button>
+    </form>
+
+    <form th:action="@{/manage-account/upload-profile-picture}" method="post" enctype="multipart/form-data" class="mb-8">
+        <div class="mb-4">
+            <label for="profilePicture" class="block text-gray-700 font-medium">Profile Picture</label>
+            <div>
+                <img th:src="${profilePicturePath}" alt="Profile Picture" class="w-16 h-16 rounded-full border border-gray-300 object-cover">
+            </div>
+            <input type="file" id="profilePicture" name="profilePicture"
+                   class="mt-2 w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
+        </div>
+        <button type="submit"
+                class="bg-blue-500 text-white font-bold px-4 py-2 rounded hover:bg-blue-600">
+            Upload Picture
+        </button>
+    </form>
+
+    <div th:if="${param.success}" class="text-green-600 font-medium">
+        Display name updated successfully!
+    </div>
+    <div th:if="${param.profilePictureUploaded}" class="text-blue-600 font-medium">
+        Profile picture uploaded successfully!
+    </div>
+    <div th:if="${param.error}" class="text-red-600 font-medium">
+        <p th:text="${param.error}"></p>
+    </div>
+</main>
+<script th:src="@{/js/notification.js}"></script>
+</body>
+</html>
+

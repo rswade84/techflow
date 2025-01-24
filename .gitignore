@@ -35,6 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+local.env
+.DS_Store
+**/.DS_Store
 
 ####logs######
 spring.log

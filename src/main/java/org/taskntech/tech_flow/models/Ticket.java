@@ -17,6 +17,14 @@ import java.time.format.DateTimeFormatter;
 @Entity
 public class Ticket extends AbstractEntity {
 
+    private LocalDateTime statusLastUpdated;  // Timestamp of last status change
+    private StatusUpdates previousStatus;     // Stores the previous status value
+
+    //NO declarative are needed
+    //Going to switch to java.sql.timestamp
+    private LocalDateTime lastEdited;
+
+
     @Id
     @GeneratedValue
     private int ticketId;
@@ -39,15 +47,11 @@ public class Ticket extends AbstractEntity {
 
     //NO declarative are needed
     //Going to switch to java.sql.timestamp
-    private LocalDateTime dateSubmitted;
+    private final LocalDateTime dateSubmitted;
 
     @NotBlank
     @Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
     private String clientDepartment;
-
-    //NO declarative are needed
-    //Going to switch to java.sql.timestamp
-    private LocalDateTime lastEdited;
 
     //edit after core features are done
     private String notes;
@@ -56,17 +60,23 @@ public class Ticket extends AbstractEntity {
     public Ticket(String name, String email, String details, PriorityValue priority, String clientDepartment) {
         super(name, email);
         this.details = details;
-        this.priority = priority; // Allow null here
+        this.priority = priority;
         this.clientDepartment = clientDepartment;
-        setDateSubmitted();
+        this.status = StatusUpdates.NOT_STARTED;  // Initialize status
+        this.previousStatus = null;               // Initialize previousStatus
+        this.statusLastUpdated = LocalDateTime.now(); // Initialize statusLastUpdated
+        this.dateSubmitted = LocalDateTime.now();
     }
 
     // Added a No-argument constructor
+    // UPDATED - to initialize previousStatus and statusLastUpdated
     public Ticket() {
         super("", "");
-        this.priority = PriorityValue.LOW; // Sets the default value to low on the form
+        this.priority = PriorityValue.LOW;
         this.status = StatusUpdates.NOT_STARTED;
-        setDateSubmitted();
+        this.previousStatus = null; // Initialize previousStatus to null when creating a new ticket for the first time
+        this.statusLastUpdated = LocalDateTime.now(); // Initialize statusLastUpdated to the current timestamp
+        this.dateSubmitted = LocalDateTime.now();
     }
 
 
@@ -80,6 +90,11 @@ public class Ticket extends AbstractEntity {
 
     public int getTicketId() {
         return ticketId;
+    }
+
+    // UPDATE - Added a setter for ticketId for updating
+    public void setTicketId(int ticketId) {
+        this.ticketId = ticketId;
     }
 
     // UPDATE - Changed to return PriorityValue enum instead of int
@@ -106,15 +121,13 @@ public class Ticket extends AbstractEntity {
         return dateSubmitted;
     }
 
-    private void setDateSubmitted() {
-        this.dateSubmitted = LocalDateTime.now();
-    }
-
-    public String getDateString( LocalDateTime date) {
+    // UPDATE - to handle null dates
+    public String getDateString(LocalDateTime date) {
+        if (date == null) { // check if the date is null
+            return "N/A";
+        }
         DateTimeFormatter dateFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        String formattedDate = date.format(dateFormatObj);
-        return formattedDate;
-
+        return date.format(dateFormatObj);
     }
 
     public String getClientDepartment() {
@@ -130,7 +143,6 @@ public class Ticket extends AbstractEntity {
     }
 
     public void setLastEdited() {
-
         this.lastEdited= LocalDateTime.now();
     }
 
@@ -140,5 +152,23 @@ public class Ticket extends AbstractEntity {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public void setStatusLastUpdated(LocalDateTime statusLastUpdated) {
+        this.statusLastUpdated = statusLastUpdated;
+    }
+
+    public void setPreviousStatus(StatusUpdates previousStatus) {
+        this.previousStatus = previousStatus;
+    }
+
+    // UPDATE - added getters for status updates
+    public StatusUpdates getPreviousStatus() {
+        return previousStatus;
+    }
+
+    // UPDATE - added getters for localdatetime
+    public LocalDateTime getStatusLastUpdated() {
+        return statusLastUpdated;
     }
 }

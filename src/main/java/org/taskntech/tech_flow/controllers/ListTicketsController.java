@@ -6,18 +6,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.taskntech.tech_flow.exceptions.TicketNotFoundException;
 import org.taskntech.tech_flow.models.PriorityValue;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
 import org.taskntech.tech_flow.service.TicketService;
+import org.taskntech.tech_flow.controllers.NotificationController;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+/*
+ * Model is an interface that is used to add data to the model.
+ * @PathVariable = is used to bind the URL path variable to a method parameter.
+ * @Valid = is used to validate the object before saving it to the database.
+ * @ModelAttribute = is used to bind the form data to a model object.
+ *
+ * */
 
 @Controller
 @RequestMapping("/tickets")
@@ -28,23 +35,58 @@ public class ListTicketsController {
 
         // List all tickets
         @GetMapping
-        public String listTickets(Model model) {
-                List<Ticket> tickets = ticketService.getAllTickets();
+        public String listTickets(Model model, @RequestParam(name = "sortBy", required = false, defaultValue = "Default") String sortBy ) {
+
+                List<Ticket> tickets = ticketService.getTicketList(sortBy);
                 if (tickets == null) {
                         tickets = new ArrayList<>(); // Handle null by initializing an empty list
                 }
-                model.addAttribute("tickets", tickets);
-                return "tickets/list";
-        }
 
+                model.addAttribute("tickets", tickets);
+                model.addAttribute("sortBy", sortBy);
+                model.addAttribute("sortOptions",  ticketService.sortOptions);
+
+                return "/tickets/list";
+        }
 
         // Display the form to create a new ticket
         @GetMapping("/create")
         public String displayCreateTicketForm(Model model) {
-                model.addAttribute("ticket", new Ticket());
+                // Creates an empyt ticket object  and adds it to the model
+                model.addAttribute("ticket", new Ticket()); // remember, use of new keyword creates new object
+                // Gets all the values from PriorityValues (High, MEDIUM, LOW)
                 model.addAttribute("priorityValues", PriorityValue.values());
+                // Gets all enum values from StatusUpdates (NOT STARTED, IN PROGRESS, etc)
                 model.addAttribute("statusValues", StatusUpdates.values());
+                // Returns path to Thymeleaf that will display the form
                 return "tickets/create";
+        }
+
+        @PostMapping("/close/{ticketId}")
+        public String closeTicket(@PathVariable Integer ticketId) {
+                try {
+                        ticketService.closeTicket(ticketId);
+                        return "redirect:/tickets";
+                } catch (TicketNotFoundException e) {
+                        return "redirect:/tickets";
+                }
+        }
+
+
+                // Display edit form for existing ticket
+        @GetMapping("/edit/{ticketId}")
+        public String showEditForm(@PathVariable Integer ticketId, Model model) {
+                // Using optional for cases of if the ticket does not exist
+                Ticket ticket = ticketService.findTicketById(ticketId);
+
+                // Try to find the ticket and store it
+                if (ticket == null) {
+                        throw new TicketNotFoundException("Ticket not found with ID: " + ticketId);
+                }
+                model.addAttribute("ticket", ticket); // Adds the existing ticket
+                model.addAttribute("priorityValues", PriorityValue.values()); // Adds the priority values
+                model.addAttribute("statusValues", StatusUpdates.values()); // Adds the status values
+                return "tickets/edit"; // Returns the edit form
         }
 
         // Process the ticket creation form
@@ -62,6 +104,7 @@ public class ListTicketsController {
 
                 try {
                         ticketService.createTicket(ticket);
+                        ticketService.addRecentActivity(0, ticket);
                         return "redirect:/tickets";
                 } catch (ValidationException e) {
                         model.addAttribute("priorityValues", PriorityValue.values());
@@ -71,8 +114,72 @@ public class ListTicketsController {
                 }
         }
 
-        // Setter for unit testing
-        public void setTicketService(TicketService ticketService) {
-                this.ticketService = ticketService;
-        }
+        // Process the edit form submission
+        @PostMapping("/edit/{ticketId}")
+        public String processEditForm(@PathVariable Integer ticketId,
+                                      @Valid @ModelAttribute("ticket") Ticket ticket,
+                                      BindingResult bindingResult,
+                                      Model model) {
+                if (bindingResult.hasErrors()) {
+                        model.addAttribute("priorityValues", PriorityValue.values());
+                        model.addAttribute("statusValues", StatusUpdates.values());
+                        model.addAttribute("errorMessage", "Please fix the errors in the form");
+                        return "tickets/edit";
+                }
+
+                try {
+                        ticket.setTicketId(ticketId);
+                        ticket.setLastEdited();
+
+                        // Get current ticket first
+                        Ticket currentTicket = ticketService.findTicketById(ticketId);
+
+                        // If notes have changed, update them separately
+                        if (currentTicket != null && !Objects.equals(currentTicket.getNotes(), ticket.getNotes())) {
+                                ticketService.addOrUpdateNote(ticketId, ticket.getNotes());
+
+                                //update recent activity log
+                                ticketService.addRecentActivity(4,ticket);
+                        }
+
+                        //update recent activity log if status has changed
+                        if (currentTicket != null && !Objects.equals(currentTicket.getStatus(), ticket.getStatus())) {
+                                ticketService.addRecentActivity(2,ticket);
+
+                        }
+                        //update recent activity log if priority has changed
+                        if (currentTicket != null && !Objects.equals(currentTicket.getPriority(), ticket.getPriority())) {
+                                ticketService.addRecentActivity(3,ticket);
+
+                        }
+
+                        //update recent activity log if anything else has changed
+                        if (currentTicket != null && (!Objects.equals(currentTicket.getName(), ticket.getName()) ||
+                                !Objects.equals(currentTicket.getEmail(), ticket.getEmail()) ||
+                                !Objects.equals(currentTicket.getDetails(), ticket.getDetails()) ||
+                                !Objects.equals(currentTicket.getClientDepartment(), ticket.getClientDepartment()))){
+
+                                ticketService.addRecentActivity(1,ticket);
+                        }
+
+                        ticketService.updateTicket(ticket);
+
+                        return "redirect:/tickets";
+                } catch (ValidationException ve) {
+                        model.addAttribute("errorMessage", "Invalid status transition: " + ve.getMessage());
+                        model.addAttribute("priorityValues", PriorityValue.values());
+                        model.addAttribute("statusValues", StatusUpdates.values());
+                        return "tickets/edit";
+                } catch (Exception e) {
+                        model.addAttribute("errorMessage", "Error updating ticket: " + e.getMessage());
+                        model.addAttribute("priorityValues", PriorityValue.values());
+                        model.addAttribute("statusValues", StatusUpdates.values());
+                        return "tickets/edit";
+                }
+
+}
+                // Setter for unit testing
+                public void setTicketService (TicketService ticketService){
+                        this.ticketService = ticketService;
+                }
 }
