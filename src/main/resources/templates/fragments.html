@@ -14,11 +14,12 @@
 <body>
 <!--<header th:fragment="header" class="bg-white p-6 flex items-center justify-between min-h-[103px]">-->
 <header th:fragment="header" class="bg-white p-6 min-h-[103px]">
-    <div class="flex items-center float-left pt-[6px]">
-        <h1 class="text-4xl font-bold">TechFlow</h1>
-    </div>
-    <th:block th:if="${requestUri != '/'}">
-        <nav class="flex flex-wrap items-center justify-end" th:with="currentStyles=${'border border-gray-500 bg-gray-200'}">
+    <nav class="flex flex-wrap items-center justify-between"
+         th:with="currentStyles=${'border border-gray-500 bg-gray-200'}">
+        <div class="flex items-center float-left pt-[6px]">
+            <h1 class="text-4xl font-bold">TechFlow</h1>
+        </div>
+        <th:block th:if="${requestUri != '/'}">
             <button data-collapse-toggle="navbar-default" type="button"
                     class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                     aria-controls="navbar-default" aria-expanded="false">
@@ -30,18 +31,18 @@
                 </svg>
             </button>
             <div class="hidden w-full md:contents md:w-auto" id="navbar-default">
-                <ul class="flex flex-col md:flex-row justify-end md:space-x-5 text-black">
+                <ul class="flex flex-col md:flex-row justify-end md:space-x-5 text-black md:items-center p-4 md:p-0 mt-4 md:mt-0 md:bg-inherit bg-gray-100">
                     <li><a href="/tickets/create"
-                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
+                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none text-center mb-2 md:mb-0"
                            th:classappend="${requestUri == '/tickets/create'} ? ${currentStyles} : bg-gray-100">Create
                         Ticket</a>
                     </li>
                     <li><a href="/tickets"
-                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
+                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none text-center mb-2 md:mb-0"
                            th:classappend="${requestUri == '/tickets'} ? ${currentStyles} : bg-gray-100">All Tickets</a>
                     </li>
                     <li><a href="/dashboard"
-                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
+                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none text-center mb-2 md:mb-0"
                            th:classappend="${requestUri == '/dashboard'} ? ${currentStyles} : bg-gray-100">Dashboard</a>
                     </li>
                     <!--                <li><a href="/manage-account"-->
@@ -49,30 +50,34 @@
                     <!--                    Account</a></li>-->
                     <!--                <li>-->
                     <li>
-                    <form th:action="@{/logout}" method="post" class="mt-[1px]">
-                        <button type="submit"
-                                class="text-white bg-gray-900 hover:bg-gray-600 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">
-                            Logout
-                        </button>
-                    </form>
+                        <form th:action="@{/logout}" method="post" class="mt-[1px]">
+                            <button type="submit"
+                                    class="w-full text-white bg-gray-600 hover:bg-gray-900 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none mb-2 md:mb-0">
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <div data-tooltip-target="tooltip-manage-account"
+                             class="text-black font-bold flex-col item-center md:!ml-3 hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 rounded-lg focus:outline-none">
+                            <a href="/manage-account"><img th:src="${profilePicturePath}" alt="Profile Picture"
+                                                           class="w-10 h-10 rounded-full border border-gray-300 object-cover m-auto"></a>
+                            <p class="text-[10px] text-center"><a href="/manage-account"><span th:text="${name}"></span></a></p>
+                            <div id="tooltip-manage-account" role="tooltip"
+                                 class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Manage Account
+
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
 
-                <div data-tooltip-target="tooltip-manage-account"
-                     class="text-black font-bold flex-col item-center !ml-3">
-                    <a href="/manage-account"><img th:src="${profilePicturePath}" alt="Profile Picture"
-                                                   class="w-10 h-10 rounded-full border border-gray-300 object-cover m-auto"></a>
-                    <p class="text-[10px] text-center"><a href="/manage-account"><span th:text="${name}"></span></a></p>
-                    <div id="tooltip-manage-account" role="tooltip"
-                         class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                        Manage Account
 
-                        <div class="tooltip-arrow" data-popper-arrow></div>
-                    </div>
-                </div>
             </div>
-        </nav>
-    </th:block>
+        </th:block>
+    </nav>
+
 </header>
 
 <div th:fragment="notification" id="notification" class="hidden absolute left-[10px] bg-orange-500">
