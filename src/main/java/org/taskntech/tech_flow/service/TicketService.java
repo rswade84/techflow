@@ -41,7 +41,6 @@ public class TicketService {
 
         // Create a new ticket
         public Ticket createTicket(Ticket ticket) {
-
                 return ticketRepository.save(ticket);
         }
 
