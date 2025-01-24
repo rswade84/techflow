@@ -38,3 +38,7 @@ out/
 local.env
 .DS_Store
 **/.DS_Store
+
+####logs######
+spring.log
+logs
