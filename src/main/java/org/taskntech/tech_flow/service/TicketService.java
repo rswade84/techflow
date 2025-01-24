@@ -41,8 +41,6 @@ public class TicketService {
 
         // Create a new ticket
         public Ticket createTicket(Ticket ticket) {
-                // add action to recent activity dashboard
-                //addRecentActivity(0, ticket);
 
                 return ticketRepository.save(ticket);
         }
