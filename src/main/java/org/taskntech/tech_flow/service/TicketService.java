@@ -37,8 +37,13 @@ public class TicketService {
 
         public List<String> sortOptions = List.of("Default","Oldest First", "Newest First", "Highest First","Lowest First","Closed Tickets");
 
+        public ArrayList<String> recentActivityLog = new ArrayList<>();
+
         // Create a new ticket
         public Ticket createTicket(Ticket ticket) {
+                // add action to recent activity dashboard
+                //addRecentActivity(0, ticket);
+
                 return ticketRepository.save(ticket);
         }
 
@@ -53,14 +58,12 @@ public class TicketService {
         }
 
         // Sort ticket list
-
         public List<Ticket> getTicketList(String value){
                 List<Ticket> tickets = new ArrayList<>();
                 ticketRepository.findAll().forEach(ticket -> { // Iterates over repo/database, returns all tickets and adds them to the list
                         tickets.add(ticket);
                 });
                 int flag = 0;
-
 
                 if (value.equals("Oldest First")){
 
@@ -73,8 +76,6 @@ public class TicketService {
                                         return 0;
                                 }
                         });
-
-
 
                 } else if (value.equals("Newest First")) {
 
@@ -142,6 +143,7 @@ public class TicketService {
                 if (ticketRepository.existsById(ticket.getTicketId())) {
                         Ticket updatedTicket = ticketRepository.save(ticket);
 
+
                         // Publish the domain event after saving the ticket
                         eventPublisher.publishEvent(new TicketUpdatedEvent(updatedTicket));
 
@@ -154,6 +156,7 @@ public class TicketService {
         public void closeTicket(Integer ticketId) {
                 updateTicketStatus(ticketId,StatusUpdates.CLOSED);
 
+
         }
 
         // Update ticket status
@@ -161,6 +164,13 @@ public class TicketService {
         public Ticket updateTicketStatus(Integer ticketId, StatusUpdates newStatus) {
                 // Fetch the ticket by its ticketId
                 Optional<Ticket> retrievedTicket = ticketRepository.findById(ticketId);
+
+                //value for activity note
+                int num = 2;
+                if (newStatus == StatusUpdates.CLOSED){
+                        num = 5;
+                }
+
 
                 // Check if the ticket exists
                 if (retrievedTicket.isPresent()) {
@@ -181,6 +191,9 @@ public class TicketService {
                         ticket.setLastEdited();
 
                         Ticket updatedTicket = ticketRepository.save(ticket);
+
+                        // add action to recent activity dashboard
+                        addRecentActivity(num,updatedTicket);
 
                         // Publish a domain event
                         eventPublisher.publishEvent(new TicketUpdatedEvent(updatedTicket));
@@ -240,7 +253,7 @@ public class TicketService {
 
         // Update ticket details
         public Ticket updateTicketDetails(Integer ticketId, String newTicketDetails) {
-                // Fetch the ticket detials
+                // Fetch the ticket details
                 Optional<Ticket> retrievedTicket = ticketRepository.findById(ticketId);
 
                 // Check if ticket exist
@@ -293,4 +306,45 @@ public class TicketService {
                 return false; // IntelliJ forced me to add. I assumed for any unexpected cases, return false.
 
         }
+
+        public void addRecentActivity(int n, Ticket t){
+                String entry = "";
+                switch(n){
+                        case 0:
+                                entry = "Ticket No. " + t.getTicketId() + " was created.";
+                                break;
+                        case 1:
+                                entry = "Ticket No. " + t.getTicketId() + " was edited.";
+                                break;
+                        case 2:
+                                entry = "Ticket No. " + t.getTicketId() + " status was changed to " + t.getStatus() + ".";
+                                break;
+                        case 3:
+                                entry = "Ticket No. " + t.getTicketId() + " priority was changed to " + t.getPriority() + ".";
+                                break;
+                        case 4:
+                                entry = "Ticket No. " + t.getTicketId() + " notes were updated.";
+                                break;
+                        case 5:
+                                entry = "Ticket No. " + t.getTicketId() + " was closed.";
+                                break;
+
+
+                }
+                updateActivityLog(entry);
+        }
+
+        public void updateActivityLog(String log){
+                if (recentActivityLog.size() >= 10){
+
+                        recentActivityLog.remove(9);
+                        recentActivityLog.add(0,log);
+
+                }else {
+                        recentActivityLog.add(0,log);
+                }
+        }
+
+
+
 }

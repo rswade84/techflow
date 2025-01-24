@@ -18,6 +18,8 @@ public class DashboardController {
     @GetMapping
     public String displayAnalytics(Model model){
 
+        model.addAttribute("recentActivity", ticketService.recentActivityLog);
+
         return "dashboard";
     }
 
