@@ -7,9 +7,9 @@
 <header th:replace="fragments.html :: header"></header>
 <div th:replace="fragments.html :: notification"></div>
 
-    <div class="p-8">
-        <h1 class="text-xl">Tickets Analytics Dashboard </h1>
-    </div>
+<div class="p-8">
+    <h1 class="text-xl">Tickets Analytics Dashboard</h1>
+</div>
 
 
 
@@ -35,32 +35,54 @@
     <p>can add notifs here if you would like</p>
 </div>-->
 
-    <div class="flex items-center justify-center space-x-8 pt-8" >
+<div class="flex items-center justify-center space-x-8 pt-8" >
 
-        <!--shapes will go here-->
-        <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl"></div>
-        <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl"></div>
+    <!--shapes will go here-->
+    <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl"></div>
+    <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl"></div>
 
-        <!-- recent activity -->
-        <div class="flex-col justify-items-center w-96 h-96 bg-gray-300 p-2 rounded-2xl">
-            <div class="text-2xl py-6">
-                <p >Recent Activity</p>
-            </div>
-
-            <div class="w-80 h-64 bg-white overflow-auto border-2 border-black">
-                <table class="w-full text-lg py-2">
-                    <tbody>
-                    <tr th:each="log : ${recentActivity}" class="even:bg-blue-200 ">
-                        <td th:text="${log}" class="px-4 py-4 text-center"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+    <!-- recent activity -->
+    <div class="flex-col justify-items-center w-96 h-96 bg-gray-300 p-2 rounded-2xl">
+        <div class="text-2xl py-6">
+            <p >Recent Activity</p>
         </div>
 
-        <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl"></div>
-
+        <div class="w-80 h-64 bg-white overflow-auto border-2 border-black">
+            <table class="w-full text-lg py-2">
+                <tbody>
+                <tr th:each="log : ${recentActivity}" class="even:bg-blue-200 ">
+                    <td th:text="${log}" class="px-4 py-4 text-center"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <!-- UPDATE: Avg Response Time section -->
+    <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl">
+        <div class="text-2xl py-6">
+            <p>Average Response Time</p>
+        </div>
+
+        <div class="flex flex-col space-y-8 p-4">
+            <!-- Initial Response Card -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold text-gray-700">Initial Response</h3>
+                <p class="text-3xl font-bold mt-2" th:text="${responseMetrics.formattedInitialResponseTime}">0h 0m</p>
+                <p class="text-sm text-gray-500 mt-1">Avg. Ticket Start Time</p>
+            </div>
+
+            <!-- Resolution Time Card -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold text-gray-700">Avg. Completion Time</h3>
+                <p class="text-3xl font-bold mt-2" th:text="${responseMetrics.formattedResolutionTime}">0h 0m</p>
+                <p class="text-sm text-gray-500 mt-1">Average time to resolution</p>
+            </div>
+        </div>
+    </div>
+
+
+</div>
 
 <div class="flex justify-end space-x-4 py-12 px-10">
 
@@ -71,7 +93,7 @@
 
     <a href="/error.log" download>
         <button type="button" class="bg-blue-500 hover:bg-blue-700 text-white p-2 rounded mb-4 inline-block">
-        <i class="fas fa-download p-2"></i>Error Logs</button>
+            <i class="fas fa-download p-2"></i>Error Logs</button>
     </a>
 </div>
 
