@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.taskntech.tech_flow.data.TicketRepository;
 import org.taskntech.tech_flow.exceptions.TicketNotFoundException;
 import org.taskntech.tech_flow.models.PriorityValue;
+import org.taskntech.tech_flow.models.ResponseTimeMetrics;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
 import org.taskntech.tech_flow.notifications.TicketUpdatedEvent;
@@ -364,5 +365,38 @@ public class TicketService {
 
                 return count > 0 ? totalHours / count : 0.0;
         }
+
+        public double getAverageResolutionTime() {
+                Iterable<Ticket> tickets = ticketRepository.findAll();
+                double totalHours = 0;
+                int count = 0;
+
+                for (Ticket ticket : tickets) {
+                        if (ticket.getStatus() == StatusUpdates.RESOLVED ||
+                                ticket.getStatus() == StatusUpdates.CLOSED) {
+                                if (ticket.getStatusLastUpdated() != null &&
+                                        ticket.getDateSubmitted() != null) {
+
+                                        Duration duration = Duration.between(
+                                                ticket.getDateSubmitted(),
+                                                ticket.getStatusLastUpdated()
+                                        );
+                                        totalHours += duration.toHours();
+                                        count++;
+                                }
+                        }
+                }
+
+                return count > 0 ? totalHours / count : 0.0;
+        }
+
+        public ResponseTimeMetrics getResponseTimeMetrics() {
+                return new ResponseTimeMetrics(
+                        getAverageInitialResponseTime(),
+                        getAverageResolutionTime()
+                );
+        }
+
+
 
 }
