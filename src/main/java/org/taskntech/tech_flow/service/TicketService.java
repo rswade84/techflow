@@ -10,6 +10,7 @@ import org.taskntech.tech_flow.models.PriorityValue;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
 import org.taskntech.tech_flow.notifications.TicketUpdatedEvent;
+import java.time.Duration;
 
 
 import java.time.LocalDateTime;
@@ -342,6 +343,26 @@ public class TicketService {
                 }
         }
 
+        public double getAverageInitialResponseTime() {
+                Iterable<Ticket> tickets = ticketRepository.findAll();
+                double totalHours = 0;
+                int count = 0;
 
+                for (Ticket ticket : tickets) {
+                        if (ticket.getStatusLastUpdated() != null &&
+                                ticket.getDateSubmitted() != null &&
+                                ticket.getPreviousStatus() == StatusUpdates.NOT_STARTED) {
+
+                                Duration duration = Duration.between(
+                                        ticket.getDateSubmitted(),
+                                        ticket.getStatusLastUpdated()
+                                );
+                                totalHours += duration.toHours();
+                                count++;
+                        }
+                }
+
+                return count > 0 ? totalHours / count : 0.0;
+        }
 
 }
