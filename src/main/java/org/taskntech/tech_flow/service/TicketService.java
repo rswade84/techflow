@@ -350,9 +350,10 @@ public class TicketService {
                 int count = 0;
 
                 for (Ticket ticket : tickets) {
+                        // Look for tickets that are IN_PROGRESS or beyond etc
                         if (ticket.getStatusLastUpdated() != null &&
                                 ticket.getDateSubmitted() != null &&
-                                ticket.getPreviousStatus() == StatusUpdates.NOT_STARTED) {
+                                ticket.getStatus() != StatusUpdates.NOT_STARTED) {
 
                                 Duration duration = Duration.between(
                                         ticket.getDateSubmitted(),
@@ -360,8 +361,14 @@ public class TicketService {
                                 );
                                 totalHours += duration.toHours();
                                 count++;
+
+                                // Debug printing
+                                System.out.println("Ticket " + ticket.getTicketId() + ": " + duration.toHours() + " hours");
                         }
                 }
+
+                System.out.println("Total tickets counted for initial response: " + count);
+                System.out.println("Average hours for initial response: " + (count > 0 ? totalHours / count : 0.0));
 
                 return count > 0 ? totalHours / count : 0.0;
         }
