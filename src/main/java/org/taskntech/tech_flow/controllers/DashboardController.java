@@ -19,12 +19,12 @@ public class DashboardController {
     @GetMapping
     public String displayAnalytics(Model model){
 
-            // Get response time metrics
+            // Added: Get response time metrics
             ResponseTimeMetrics metrics = ticketService.getResponseTimeMetrics();
 
-            // Displaying response time metrics
+            // Added: Displaying response time metrics
             model.addAttribute("responseMetrics", ticketService.getResponseTimeMetrics());
-            // Displaying recent activity
+
             model.addAttribute("recentActivity", ticketService.recentActivityLog);
 
         return "dashboard";
