@@ -362,13 +362,8 @@ public class TicketService {
                                 totalHours += duration.toHours();
                                 count++;
 
-                                // Debug printing
-                                System.out.println("Ticket " + ticket.getTicketId() + ": " + duration.toHours() + " hours");
                         }
                 }
-
-                System.out.println("Total tickets counted for initial response: " + count);
-                System.out.println("Average hours for initial response: " + (count > 0 ? totalHours / count : 0.0));
 
                 return count > 0 ? totalHours / count : 0.0;
         }
