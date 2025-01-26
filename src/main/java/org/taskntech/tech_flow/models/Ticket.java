@@ -19,9 +19,6 @@ public class Ticket extends AbstractEntity {
 
     private LocalDateTime statusLastUpdated;  // Timestamp of last status change
     private StatusUpdates previousStatus;     // Stores the previous status value
-
-    //NO declarative are needed
-    //Going to switch to java.sql.timestamp
     private LocalDateTime lastEdited;
 
 
@@ -40,13 +37,12 @@ public class Ticket extends AbstractEntity {
     private PriorityValue priority;
 
 
-    //find declarative
+
     // UPDATE - Changed from String to StatusUpdates enum for proper enum handling
     @Enumerated(EnumType.STRING)
     private StatusUpdates status;
 
     //NO declarative are needed
-    //Going to switch to java.sql.timestamp
     private final LocalDateTime dateSubmitted;
 
     @NotBlank
@@ -58,7 +54,7 @@ public class Ticket extends AbstractEntity {
 
     // UPDATE - Updated constructor to use PriorityValue enum instead of int
     public Ticket(String name, String email, String details, PriorityValue priority, String clientDepartment) {
-        super(name, email);
+        super(name, email); //declares superclass values
         this.details = details;
         this.priority = priority;
         this.clientDepartment = clientDepartment;
@@ -79,6 +75,8 @@ public class Ticket extends AbstractEntity {
         this.dateSubmitted = LocalDateTime.now();
     }
 
+
+    //Setters and Getters
 
     public String getDetails() {
         return details;

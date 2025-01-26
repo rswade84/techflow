@@ -37,6 +37,7 @@ public class ListTicketsController {
         @GetMapping
         public String listTickets(Model model, @RequestParam(name = "sortBy", required = false, defaultValue = "Default") String sortBy ) {
 
+                //List sorted tickets default by ID
                 List<Ticket> tickets = ticketService.getTicketList(sortBy);
                 if (tickets == null) {
                         tickets = new ArrayList<>(); // Handle null by initializing an empty list
@@ -62,9 +63,13 @@ public class ListTicketsController {
                 return "tickets/create";
         }
 
+        //after closed ticket button is pressed
         @PostMapping("/close/{ticketId}")
         public String closeTicket(@PathVariable Integer ticketId) {
+                //if ticket is found
                 try {
+
+                        //closes ticket and removes from view
                         ticketService.closeTicket(ticketId);
                         return "redirect:/tickets";
                 } catch (TicketNotFoundException e) {
@@ -104,6 +109,8 @@ public class ListTicketsController {
 
                 try {
                         ticketService.createTicket(ticket);
+
+                        //add to recent activity log
                         ticketService.addRecentActivity(0, ticket);
                         return "redirect:/tickets";
                 } catch (ValidationException e) {

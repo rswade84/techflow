@@ -16,6 +16,8 @@ public class DashboardController {
  @Autowired
  private TicketService ticketService;
 
+
+    //View dashboard analytics page
     @GetMapping
     public String displayAnalytics(Model model){
 
@@ -25,6 +27,7 @@ public class DashboardController {
             // Added: Displaying response time metrics
             model.addAttribute("responseMetrics", ticketService.getResponseTimeMetrics());
 
+            //Added array list recentActivityLog to view for recent activity
             model.addAttribute("recentActivity", ticketService.recentActivityLog);
 
         return "dashboard";
