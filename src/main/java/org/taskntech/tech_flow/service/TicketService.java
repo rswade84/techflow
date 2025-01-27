@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class TicketService {
@@ -446,6 +449,15 @@ public class TicketService {
                 );
         }
 
+        // Filters tickets based on their status before grouping by priority. Excludes tickets where the status is marked as "closed" and "resolved".
+        public Map<String, Long> getTicketCountByPriority() {
+                return StreamSupport.stream(ticketRepository.findAll().spliterator(), false)
+                        .filter(ticket -> ticket.getStatus() != StatusUpdates.CLOSED && ticket.getStatus() != StatusUpdates.RESOLVED)
+                        .collect(Collectors.groupingBy(
+                                ticket -> ticket.getPriority().name(),
+                                Collectors.counting()
+                        ));
+        }
 
 
 }
