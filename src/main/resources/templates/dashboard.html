@@ -35,19 +35,19 @@
     <p>can add notifs here if you would like</p>
 </div>-->
 
-    <div class="flex items-center justify-center space-x-8 pt-8" >
+    <div class="flex justify-items-center grid grid-cols-1 gap-3 pt-8" >
 
         <!--shapes will go here-->
-        <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl"></div>
-        <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl"></div>
+        <div class="w-[80%] aspect-square bg-gray-300 p-2 rounded-2xl"></div>
+        <div class="w-[80%] aspect-square bg-gray-300 p-2 rounded-2xl"></div>
 
         <!-- recent activity -->
-        <div class="flex-col justify-items-center w-96 h-96 bg-gray-300 p-2 rounded-2xl">
+        <div class="w-[80%] aspect-square bg-gray-300 p-2 rounded-2xl">
             <div class="text-2xl py-6">
                 <p >Recent Activity</p>
             </div>
 
-            <div class="w-80 h-64 bg-white overflow-auto border-2 border-black">
+            <div class="w-full aspect-square bg-white overflow-auto border-2 border-black">
                 <table class="w-full text-lg py-2">
                     <tbody>
                     <tr th:each="log : ${recentActivity}" class="even:bg-blue-200 ">
@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl"></div>
+        <div class="w-[80%] aspect-square bg-gray-300 p-2 rounded-2xl"></div>
 
     </div>
 
