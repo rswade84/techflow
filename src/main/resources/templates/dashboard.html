@@ -41,8 +41,19 @@
         </div>
     </div>
 
-    <!-- Keep the second placeholder box -->
-    <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl"></div>
+    <!-- Ticket Status Graph -->
+    <div class="w-96 h-96 bg-gray-300 p-4 rounded-2xl">
+        <div class="text-2xl py-2 text-center">
+            <p>Real-Time Status</p>
+        </div>
+        <div class="flex justify-center py-2">
+            <label for="includeClosed" class="text-sm font-medium text-gray-700 mr-2">Include Closed Tickets:</label>
+            <input type="checkbox" id="includeClosed" class="toggle-checkbox">
+        </div>
+        <div class="relative h-[80%] w-full">
+        <canvas id="ticketStatusBarGraph" class="h-[75%] w-full"></canvas>
+        </div>
+    </div>
 
     <!-- recent activity -->
     <div class="flex-col justify-items-center w-96 h-96 bg-gray-300 p-2 rounded-2xl">
@@ -97,6 +108,11 @@
     </a>
 </div>
 
+<!-- Hidden div for ticket status counts -->
+<div id="ticketStatusCounts" th:text="${ticketStatusCounts}" style="display: none;"></div>
+
 <script th:src="@{/js/notification.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:src="@{/js/ticketStatusChart.js}"></script>
 </body>
 </html>

@@ -459,5 +459,12 @@ public class TicketService {
                         ));
         }
 
-
+        // Added method to get tickets counts based on their respective status.
+        public Map<String, Long> getTicketCountsByStatus() {
+                return StreamSupport.stream(ticketRepository.findAll().spliterator(), false)
+                        .collect(Collectors.groupingBy(
+                                ticket -> ticket.getStatus().name(),
+                                Collectors.counting()
+                        ));
+        }
 }
