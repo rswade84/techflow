@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class TicketService {
@@ -446,6 +449,13 @@ public class TicketService {
                 );
         }
 
+        public Map<String, Long> getTicketCountByPriority() {
+                return StreamSupport.stream(ticketRepository.findAll().spliterator(), false)
+                        .collect(Collectors.groupingBy(
+                                ticket -> ticket.getPriority().name(),
+                                Collectors.counting()
+                        ));
+        }
 
 
 }
