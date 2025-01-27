@@ -10,6 +10,8 @@ import org.taskntech.tech_flow.models.ResponseTimeMetrics;
 import org.taskntech.tech_flow.service.TicketService;
 
 import java.util.Map;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/dashboard")
@@ -21,7 +23,7 @@ public class DashboardController {
 
     //View dashboard analytics page
     @GetMapping
-    public String displayAnalytics(Model model){
+    public String displayAnalytics(Model model) throws JsonProcessingException {
 
             // Added: Get response time metrics
             ResponseTimeMetrics metrics = ticketService.getResponseTimeMetrics();
@@ -32,12 +34,21 @@ public class DashboardController {
             //Added array list recentActivityLog to view for recent activity
             model.addAttribute("recentActivity", ticketService.recentActivityLog);
 
-            // Fetching ticket counts by priority
+            // Fetches ticket counts by priority
             Map<String, Long> ticketCountByPriority = ticketService.getTicketCountByPriority();
             model.addAttribute("ticketCountByPriority", ticketCountByPriority);
             model.addAttribute("highPriorityCount", ticketCountByPriority.getOrDefault("HIGH", 0L));
             model.addAttribute("mediumPriorityCount", ticketCountByPriority.getOrDefault("MEDIUM", 0L));
             model.addAttribute("lowPriorityCount", ticketCountByPriority.getOrDefault("LOW", 0L));
+
+            // Fetches ticket counts for all statuses
+            Map<String, Long> ticketStatusCounts = ticketService.getTicketCountsByStatus();
+
+            // Converts map to JSON string
+            ObjectMapper objectMapper = new ObjectMapper();
+            String ticketStatusCountsJson = objectMapper.writeValueAsString(ticketStatusCounts);
+
+            model.addAttribute("ticketStatusCounts", ticketStatusCountsJson);
 
         return "dashboard";
     }
