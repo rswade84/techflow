@@ -8,10 +8,12 @@ public enum PriorityValue {
 
     private final int displayPriority;
 
+    //sets displayPriority to 2,1,0
     private PriorityValue(int value) {
         this.displayPriority = value;
     }
 
+    //get int value of Enum for display for sort
     public int getPriority() {
         return displayPriority;
     }

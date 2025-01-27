@@ -7,15 +7,20 @@ import org.springframework.stereotype.Service;
 import org.taskntech.tech_flow.data.TicketRepository;
 import org.taskntech.tech_flow.exceptions.TicketNotFoundException;
 import org.taskntech.tech_flow.models.PriorityValue;
+import org.taskntech.tech_flow.models.ResponseTimeMetrics;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
 import org.taskntech.tech_flow.notifications.TicketUpdatedEvent;
+import java.time.Duration;
 
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class TicketService {
@@ -35,8 +40,10 @@ public class TicketService {
                 this.ticketRepository = ticketRepository;
         }
 
+        //list of value to be displayed for sort selector
         public List<String> sortOptions = List.of("Default","Oldest First", "Newest First", "Highest First","Lowest First","Closed Tickets");
 
+        //Array list of recent activity in app holds up to 10
         public ArrayList<String> recentActivityLog = new ArrayList<>();
 
         // Create a new ticket
@@ -60,63 +67,98 @@ public class TicketService {
                 ticketRepository.findAll().forEach(ticket -> { // Iterates over repo/database, returns all tickets and adds them to the list
                         tickets.add(ticket);
                 });
+
+                //used to decided if resolved tickets should be removed from from tickets
                 int flag = 0;
 
+                //if oldest first is selected
                 if (value.equals("Oldest First")){
+
+                        //.sort() method for array list
+                        //sorts items in tickets comparing two values at a time until list is sorted from oldest to youngest
+
+                        //localDateTime functions:
+                        //isBefore: t1.isbefore(t2) boolean that returns true if t1 is older than t2
+                        //isAfter: t1.isAfter(t2) boolean that returns true if t1 is younger than t2
 
                         tickets.sort((t1, t2) -> {
                                 if (t1.getDateSubmitted().isBefore(t2.getDateSubmitted())) {
-                                        return -1;
+                                        return -1; // keep items as is t1 should come before t2
                                 } else if (t1.getDateSubmitted().isAfter(t2.getDateSubmitted())) {
-                                        return 1;
+                                        return 1; //switch items t2 should come before item t1
                                 } else {
-                                        return 0;
+                                        return 0; // values are the same so no switch of positions
                                 }
                         });
 
+                //if newest first is selected
                 } else if (value.equals("Newest First")) {
+
+                        //.sort() method for array list
+                        //sorts items in tickets comparing two values at a time until list is sorted from youngest to oldest
+
+                        //localDateTime functions:
+                        //isBefore: t1.isbefore(t2) boolean that returns true if t1 is older than t2
+                        //isAfter: t1.isAfter(t2) boolean that returns true if t1 is younger than t2
 
                         tickets.sort((t1, t2) -> {
                                 if (t1.getDateSubmitted().isAfter(t2.getDateSubmitted())) {
-                                        return -1;
+                                        return -1; // keep items as is t1 should come before t2
                                 } else if (t1.getDateSubmitted().isBefore(t2.getDateSubmitted())) {
-                                        return 1;
+                                        return 1; //switch items t2 should come before item t1
                                 } else {
-                                        return 0;
+                                        return 0;// values are the same so no switch of positions
                                 }
                         });
 
+                //if Highest first is selected
                 }else if (value.equals("Highest First")) {
+
+                        //.sort() method for array list
+                        //sorts items in tickets comparing two values at a time until list is sorted from highest Priority to lowest
+
+                        //get enum int value and compares to see which is higher or lower or equal
+                        //t1.getPriority().getPriority() gets enum int value
 
                         tickets.sort((t1, t2) -> {
                                 if (t1.getPriority().getPriority() > t2.getPriority().getPriority()) {
-                                        return -1;
+                                        return -1; // keep items as is t1 is higher priority than t2
                                 } else if (t1.getPriority().getPriority() < t2.getPriority().getPriority()) {
-                                        return 1;
+                                        return 1; //switch items t2 should come before item t1
                                 } else {
-                                        return 0;
+                                        return 0; // values are the same so no switch of positions
                                 }
                         });
 
                 }else if (value.equals( "Lowest First")) {
 
+                        //.sort() method for array list
+                        //sorts items in tickets comparing two values at a time until list is sorted from lowest Priority to highest
+
+                        //get enum int value and compares to see which is higher or lower or equal
+                        //t1.getPriority().getPriority() gets enum int value
                         tickets.sort((t1, t2) -> {
                                 if (t1.getPriority().getPriority() < t2.getPriority().getPriority()) {
-                                        return -1;
+                                        return -1;// keep items as is t1 is lower priority than t2
                                 } else if (t1.getPriority().getPriority() > t2.getPriority().getPriority()) {
-                                        return 1;
+                                        return 1; //switch items t2 should come before item t1
                                 } else {
-                                        return 0;
+                                        return 0; // values are the same so no switch of positions
                                 }
                         });
 
+                //if closed tickets is selected
                 }else if (value.equals("Closed Tickets")) {
+                        //do not removed closed tickets from list
                         flag = 1;
+
+                        //remove tickets from list that are not closed
                         tickets.removeIf( t -> t.getStatus() != StatusUpdates.CLOSED);
 
                 }
 
                 if (flag == 0){
+                        //remove tickets from list that are closed
                         tickets.removeIf( t -> t.getStatus() == StatusUpdates.CLOSED);
                 }
                 return tickets;
@@ -151,6 +193,8 @@ public class TicketService {
 
         // Delete a ticket
         public void closeTicket(Integer ticketId) {
+
+                //change ticket status to closed
                 updateTicketStatus(ticketId,StatusUpdates.CLOSED);
 
 
@@ -163,9 +207,9 @@ public class TicketService {
                 Optional<Ticket> retrievedTicket = ticketRepository.findById(ticketId);
 
                 //value for activity note
-                int num = 2;
+                int num = 2; //ticket status was changed
                 if (newStatus == StatusUpdates.CLOSED){
-                        num = 5;
+                        num = 5; //ticket was closed
                 }
 
 
@@ -305,43 +349,122 @@ public class TicketService {
         }
 
         public void addRecentActivity(int n, Ticket t){
+                //specific string is chosen based on int n
+
                 String entry = "";
                 switch(n){
-                        case 0:
+                        case 0: //ticket was created
                                 entry = "Ticket No. " + t.getTicketId() + " was created.";
                                 break;
-                        case 1:
+                        case 1:// ticket was edited
                                 entry = "Ticket No. " + t.getTicketId() + " was edited.";
                                 break;
-                        case 2:
+                        case 2: //ticket's status was changed
                                 entry = "Ticket No. " + t.getTicketId() + " status was changed to " + t.getStatus() + ".";
                                 break;
-                        case 3:
+                        case 3: //ticket's priority was changed
                                 entry = "Ticket No. " + t.getTicketId() + " priority was changed to " + t.getPriority() + ".";
                                 break;
-                        case 4:
+                        case 4: //ticket's notes were changed
                                 entry = "Ticket No. " + t.getTicketId() + " notes were updated.";
                                 break;
-                        case 5:
+                        case 5:// ticket was closed
                                 entry = "Ticket No. " + t.getTicketId() + " was closed.";
                                 break;
 
 
                 }
+                //adds string entry to recentActivitylog
                 updateActivityLog(entry);
         }
 
         public void updateActivityLog(String log){
+                // if arraylist is larger than or equal to 10
                 if (recentActivityLog.size() >= 10){
 
+                        //wont every be larger than 10 so just remove last item
                         recentActivityLog.remove(9);
+
+                        //add new string to first position and move the rest to the next index
                         recentActivityLog.add(0,log);
 
                 }else {
+                        //add new string to first position and move the rest to the next index
                         recentActivityLog.add(0,log);
                 }
         }
 
+        public double getAverageInitialResponseTime() {
+                Iterable<Ticket> tickets = ticketRepository.findAll();
+                double totalHours = 0;
+                int count = 0;
 
+                for (Ticket ticket : tickets) {
+                        // Look for tickets that are IN_PROGRESS or beyond etc
+                        if (ticket.getStatusLastUpdated() != null &&
+                                ticket.getDateSubmitted() != null &&
+                                ticket.getStatus() != StatusUpdates.NOT_STARTED) {
 
+                                Duration duration = Duration.between(
+                                        ticket.getDateSubmitted(),
+                                        ticket.getStatusLastUpdated()
+                                );
+                                totalHours += duration.toHours();
+                                count++;
+
+                        }
+                }
+
+                return count > 0 ? totalHours / count : 0.0;
+        }
+
+        public double getAverageResolutionTime() {
+                Iterable<Ticket> tickets = ticketRepository.findAll();
+                double totalHours = 0;
+                int count = 0;
+
+                for (Ticket ticket : tickets) {
+                        if (ticket.getStatus() == StatusUpdates.RESOLVED ||
+                                ticket.getStatus() == StatusUpdates.CLOSED) {
+                                if (ticket.getStatusLastUpdated() != null &&
+                                        ticket.getDateSubmitted() != null) {
+
+                                        Duration duration = Duration.between(
+                                                ticket.getDateSubmitted(),
+                                                ticket.getStatusLastUpdated()
+                                        );
+                                        totalHours += duration.toHours();
+                                        count++;
+                                }
+                        }
+                }
+
+                return count > 0 ? totalHours / count : 0.0;
+        }
+
+        public ResponseTimeMetrics getResponseTimeMetrics() {
+                return new ResponseTimeMetrics(
+                        getAverageInitialResponseTime(),
+                        getAverageResolutionTime()
+                );
+        }
+
+        // Filters tickets based on their status before grouping by priority. Excludes tickets where the status is marked as "closed" and "resolved".
+        public Map<String, Long> getTicketCountByPriority() {
+                return StreamSupport.stream(ticketRepository.findAll().spliterator(), false)
+                        .filter(ticket -> ticket.getStatus() != StatusUpdates.CLOSED && ticket.getStatus() != StatusUpdates.RESOLVED)
+                        .collect(Collectors.groupingBy(
+                                ticket -> ticket.getPriority().name(),
+                                Collectors.counting()
+                        ));
+        }
+
+        // Added method to get tickets counts based on their respective status.
+        public Map<String, Long> getTicketCountsByStatus() {
+                return StreamSupport.stream(ticketRepository.findAll().spliterator(), false)
+                        .collect(Collectors.groupingBy(
+                                ticket -> ticket.getStatus().name(),
+                                Collectors.counting()
+                        ));
+        }
 }
