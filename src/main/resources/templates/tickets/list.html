@@ -46,7 +46,9 @@
 
         <!-- Sorting Dropdown -->
         <form th:action="@{/tickets}" method="get">
-            <select id="sortBy" name="sortBy" th:value="${sortBy}" class="outline outline-offset-0 outline-2 outline-blue-500 bg-white text-black p-2 rounded mb-4 inline-block" onchange="this.form.submit()">
+            <select id="sortBy" name="sortBy" th:value="${sortBy}"
+                    class="outline outline-offset-0 outline-2 outline-blue-500 bg-white text-black p-2 rounded mb-4 inline-block"
+                    onchange="this.form.submit()">
                 <option value="" disabled selected>Sort By</option>
                 <option th:each="option : ${sortOptions}"
                         th:value="${option}"
@@ -54,79 +56,81 @@
             </select>
         </form>
     </div>
+    <!-- wrap table in this div with overflow-x:auto for mobile and tablets -->
+    <div class="overflow-x-auto">
+        <!-- Table that takes full width with border -->
+        <table class="w-full border border-gray-500">
+            <thead>
+            <!-- Header row with light gray background -->
+            <!-- UPDATE: Fixed column width to maintain consistent appearance -->
+            <tr class="bg-gray-100">
+                <th class="p-2 w-12 text-left">ID</th>
+                <th class="p-2 w-24 text-left">Name</th>
+                <th class="p-2 w-28 text-left">Email</th>
+                <th class="p-2 w-24 text-left">Department</th>
+                <th class="p-2 w-80 text-left">Details</th>
+                <th class="p-2 w-20 text-left">Priority</th>
+                <th class="p-2 w-24 text-left">Status</th>
+                <th class="p-2 w-44 text-left">Date Submitted / Last Updated</th>
+                <th class="p-2 w-44 text-left">Internal Notes</th>
+                <th class="p-2 w-32 text-left">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Iterate through tickets and display their properties -->
+            <tr th:each="ticket : ${tickets}" class="border-t">
+                <td class="p-2" th:text="${ticket.ticketId}">ID</td>
+                <td class="p-2" th:text="${ticket.name}">Name</td>
+                <td class="p-2" th:text="${ticket.email}">Email</td>
+                <td class="p-2" th:text="${ticket.clientDepartment}">Department</td>
+                <td class="p-2" th:text="${ticket.details}">Details</td>
+                <td class="p-2" th:text="${ticket.priority}">Priority</td>
 
-    <!-- Table that takes full width with border -->
-    <table class="w-full border border-gray-500">
-        <thead>
-        <!-- Header row with light gray background -->
-        <!-- UPDATE: Fixed column width to maintain consistent appearance -->
-        <tr class="bg-gray-100">
-            <th class="p-2 w-12 text-left">ID</th>
-            <th class="p-2 w-24 text-left">Name</th>
-            <th class="p-2 w-28 text-left">Email</th>
-            <th class="p-2 w-24 text-left">Department</th>
-            <th class="p-2 w-80 text-left">Details</th>
-            <th class="p-2 w-20 text-left">Priority</th>
-            <th class="p-2 w-24 text-left">Status</th>
-            <th class="p-2 w-44 text-left">Date Submitted / Last Updated</th>
-            <th class="p-2 w-44 text-left">Internal Notes</th>
-            <th class="p-2 w-32 text-left">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- Iterate through tickets and display their properties -->
-        <tr th:each="ticket : ${tickets}" class="border-t">
-            <td class="p-2" th:text="${ticket.ticketId}">ID</td>
-            <td class="p-2" th:text="${ticket.name}">Name</td>
-            <td class="p-2" th:text="${ticket.email}">Email</td>
-            <td class="p-2" th:text="${ticket.clientDepartment}">Department</td>
-            <td class="p-2" th:text="${ticket.details}">Details</td>
-            <td class="p-2" th:text="${ticket.priority}">Priority</td>
-
-            <!-- Handles STATUS Color and Text -->
-            <td class="p-2">
-                <!-- UPDATE: Added COLORS based on ticket status -->
-                <!-- This uses TERNARY OPERATOR to select the status and color -->
-                <span th:class="${
+                <!-- Handles STATUS Color and Text -->
+                <td class="p-2">
+                    <!-- UPDATE: Added COLORS based on ticket status -->
+                    <!-- This uses TERNARY OPERATOR to select the status and color -->
+                    <span th:class="${
                         ticket.status.name() == 'NOT_STARTED' ? 'bg-gray-200 text-gray-800' :
                         ticket.status.name() == 'IN_PROGRESS' ? 'bg-blue-200 text-blue-800' :
                         ticket.status.name() == 'DELAYED' ? 'bg-yellow-200 text-yellow-800' :
                         ticket.status.name() == 'RESOLVED' ? 'bg-green-200 text-green-800' :
                         'bg-red-200 text-red-800'
                     } + ' px-2 py-1 rounded-full text-sm font-semibold'"
-                      th:text="${ticket.status}">
+                          th:text="${ticket.status}">
                         Status
                     </span>
-            </td>
+                </td>
 
-            <td class="p-2" th:text="${ticket.getDateString(ticket.dateSubmitted)}">Date</td>
-            <td class="p-2">
+                <td class="p-2" th:text="${ticket.getDateString(ticket.dateSubmitted)}">Date</td>
+                <td class="p-2">
                     <span class="text-sm" th:text="${#strings.abbreviate(ticket.notes ?: 'No notes', 50)}">
                         Notes preview
                     </span>
-            </td>
+                </td>
 
-            <td class="p-2">
-                <div class="flex items-center space-x-4">
-                    <a th:href="@{/tickets/edit/{id}(id=${ticket.ticketId})}"
-                       class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                        Edit Ticket
-                    </a>
+                <td class="p-2">
+                    <div class="flex items-center space-x-4">
+                        <a th:href="@{/tickets/edit/{id}(id=${ticket.ticketId})}"
+                           class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                            Edit Ticket
+                        </a>
 
-                    <form th:action="@{/tickets/close/{id}(id=${ticket.ticketId})}"
-                          method="POST"
-                          class="inline"
-                          onsubmit="return confirm('Are you sure you want to close this ticket?');">
-                        <button type="submit"
-                                class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                            Close Ticket
-                        </button>
-                    </form>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                        <form th:action="@{/tickets/close/{id}(id=${ticket.ticketId})}"
+                              method="POST"
+                              class="inline"
+                              onsubmit="return confirm('Are you sure you want to close this ticket?');">
+                            <button type="submit"
+                                    class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                Close Ticket
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 <script th:src="@{/js/notification.js}"></script>
 </body>

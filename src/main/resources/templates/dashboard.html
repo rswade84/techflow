@@ -12,10 +12,10 @@
 </div>
 
 
-<div class="flex items-center justify-center space-x-8 pt-8" >
+<div class="flex justify-items-center grid sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-8 lg:px-2" >
 
     <!-- Ticket Priority Overview -->
-    <div class="w-96 h-96 bg-gray-300 p-4 rounded-2xl">
+    <div class="w-[80%] sm:w-[90%] lg:w-[100%] bg-gray-300 p-4 rounded-2xl">
         <div class="text-2xl py-2 text-center">
             <p>Open Ticket Priority Overview</p>
         </div>
@@ -42,7 +42,7 @@
     </div>
 
     <!-- Ticket Status Graph -->
-    <div class="w-96 h-96 bg-gray-300 p-4 rounded-2xl">
+    <div class="w-[80%] sm:w-[90%] lg:w-[100%] bg-gray-300 p-4 rounded-2xl">
         <div class="text-2xl py-2 text-center">
             <p>Real-Time Status</p>
         </div>
@@ -56,12 +56,12 @@
     </div>
 
     <!-- recent activity -->
-    <div class="flex-col justify-items-center w-96 h-96 bg-gray-300 p-2 rounded-2xl">
+    <div class="flex-col justify-items-center w-[80%] sm:w-[90%] lg:w-[100%] bg-gray-300 p-2 rounded-2xl">
         <div class="text-2xl py-2">
             <p >Recent Activity</p>
         </div>
 
-        <div class="flex flex-col h-[280px] overflow-auto rounded-lg space-y-2 mt-4 p-4">
+        <div class="flex flex-col w-[80%] aspect-square overflow-auto rounded-lg space-y-2 mt-4 p-4">
             <div th:each="log : ${recentActivity}" class=" bg-white rounded-xl shadow">
                 <p th:text="${log}" class="px-4 py-4 text-center"> </p>
 
@@ -70,7 +70,7 @@
     </div>
 
     <!-- UPDATE: Avg Response Time section -->
-    <div class="w-96 h-96 bg-gray-300 p-2 rounded-2xl">
+    <div class="w-[80%] sm:w-[90%] lg:w-[100%] bg-gray-300 p-2 rounded-2xl">
         <div class="text-2xl py-2 text-center">
             <p>Average Response Time</p>
         </div>
