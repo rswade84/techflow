@@ -71,6 +71,23 @@ public class Ticket extends AbstractEntity {
         this.dateSubmitted = LocalDateTime.now();
     }
 
+    //constructor for populating table
+    //can leave uncommented
+    public Ticket(String name, String email, LocalDateTime statusLastUpdated, StatusUpdates previousStatus,
+                  LocalDateTime lastEdited,String details, PriorityValue priority, StatusUpdates status,
+                  LocalDateTime dateSubmitted, String clientDepartment, String notes) {
+        super(name, email);
+        this.statusLastUpdated = statusLastUpdated;
+        this.previousStatus = previousStatus;
+        this.lastEdited = lastEdited;
+        this.details = details;
+        this.priority = priority;
+        this.status = status;
+        this.dateSubmitted = dateSubmitted;
+        this.clientDepartment = clientDepartment;
+        this.notes = notes;
+    }
+
 
     //Setters and Getters
 

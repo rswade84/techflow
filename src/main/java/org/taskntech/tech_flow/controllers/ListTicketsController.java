@@ -11,9 +11,11 @@ import org.taskntech.tech_flow.exceptions.TicketNotFoundException;
 import org.taskntech.tech_flow.models.PriorityValue;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
+import org.taskntech.tech_flow.service.PopulateTable;
 import org.taskntech.tech_flow.service.TicketService;
 import org.taskntech.tech_flow.controllers.NotificationController;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +34,9 @@ public class ListTicketsController {
 
         @Autowired
         private TicketService ticketService;
+
+        @Autowired
+        private PopulateTable populateTable;
 
         // List all tickets
         @GetMapping
@@ -184,8 +189,15 @@ public class ListTicketsController {
                         return "tickets/edit";
                 }
 
-}
-                // Setter for unit testing
+        }
+
+        @PostMapping
+        public String populateTheTable(Model model){
+                populateTable.populateATable();
+                return "redirect:/tickets";
+        }
+
+        // Setter for unit testing
                 public void setTicketService (TicketService ticketService){
                         this.ticketService = ticketService;
                 }
