@@ -14,18 +14,12 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @Configuration
 
 //this annotation exposes SecurityFilterChain bean & enables Spring Security integration with Spring MVC.
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
-        return new MvcRequestMatcher.Builder(introspector).servletPath("/");
-    }
-
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                /*.csrf(AbstractHttpConfigurer::disable)*/
                 .csrf(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
