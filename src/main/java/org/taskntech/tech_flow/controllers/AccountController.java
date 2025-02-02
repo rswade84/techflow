@@ -2,11 +2,11 @@ package org.taskntech.tech_flow.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.taskntech.tech_flow.data.UserRepository;
@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-
 @Controller
 public class AccountController {
 
@@ -26,63 +25,73 @@ public class AccountController {
 
     @GetMapping("/manage-account")
     public String showManageAccountPage() {
-        // Changed attributes for "name" and "profilePicturePath" to be handled globally - See GlobalControllerAccountSettings
         return "manage-account";
     }
 
-    @PostMapping("/manage-account/update")
-    public String updateDisplayName(@RequestParam("displayName") String displayName,
-                                    @AuthenticationPrincipal OAuth2User principal) {
+    // Unified method to find user by email, GitHub ID, or Google Sub ID.
+    private User findUserByOAuth(OAuth2AuthenticationToken authentication, OAuth2User principal) {
+        String provider = authentication.getAuthorizedClientRegistrationId();
         String email = principal.getAttribute("email");
-        String accountName = principal.getAttribute("name");
+
         User user = userRepository.findByEmail(email);
 
-        if (user != null) {
-            user.setDisplayName(displayName);
-            userRepository.save(user);
-        }else{//if user doesn't exist, really should never occur
-
-            User newUser = userRepository.save(new User( email, accountName));
-            newUser.setDisplayName(displayName);
-            userRepository.save(newUser);
-
+        if (user == null) {
+            if ("github".equals(provider)) {
+                Integer githubIdInt = principal.getAttribute("id");
+                String githubId = (githubIdInt != null) ? String.valueOf(githubIdInt) : null;
+                user = userRepository.findByGithubId(githubId);
+            } else if ("google".equals(provider)) {
+                String googleSubId = principal.getAttribute("sub");
+                user = userRepository.findByGoogleSubId(googleSubId);
+            }
         }
+        return user;
+    }
+
+    // Handles updating the display name of a user based on their authentication provider.
+    @PostMapping("/manage-account/update")
+    public String updateDisplayName(@RequestParam("displayName") String displayName,
+                                    @AuthenticationPrincipal OAuth2User principal,
+                                    OAuth2AuthenticationToken authentication) {
+
+        User user = findUserByOAuth(authentication, principal);
+
+        if (user == null) {
+            return "redirect:/manage-account?error=UserNotFound";
+        }
+
+        user.setDisplayName(displayName);
+        userRepository.save(user);
+
         return "redirect:/manage-account?success=true";
     }
 
     private static final String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads/";
 
+    // Handles user profile picture uploads and saves the path in the database.
     @PostMapping("/manage-account/upload-profile-picture")
     public String uploadProfilePicture(@RequestParam("profilePicture") MultipartFile file,
-                                       @AuthenticationPrincipal OAuth2User principal) {
+                                       @AuthenticationPrincipal OAuth2User principal,
+                                       OAuth2AuthenticationToken authentication) {
         if (file.isEmpty()) {
             return "redirect:/manage-account?error=NoFileUploaded";
         }
 
         try {
-            String email = principal.getAttribute("email");
-            String accountName = principal.getAttribute("name");
-            User user = userRepository.findByEmail(email);
+            User user = findUserByOAuth(authentication, principal);
 
-            if (user != null) {
-                String fileName = "profile-" + user.getUserId() + ".png";
-                Path uploadPath = Paths.get(UPLOAD_DIRECTORY, fileName);
-
-                Files.createDirectories(uploadPath.getParent());
-                Files.write(uploadPath, file.getBytes());
-                user.setProfilePicturePath("/uploads/" + fileName);
-                userRepository.save(user);
-            }else { //if user doesn't exist, really should never occur
-                User newUser = userRepository.save(new User(email, accountName));
-
-                String fileName = "profile-" + newUser.getUserId() + ".png";
-                Path uploadPath = Paths.get(UPLOAD_DIRECTORY, fileName);
-
-                Files.createDirectories(uploadPath.getParent());
-                Files.write(uploadPath, file.getBytes());
-                newUser.setProfilePicturePath("/uploads/" + fileName);
-                userRepository.save(newUser);
+            if (user == null) {
+                return "redirect:/manage-account?error=UserNotFound";
             }
+
+            String fileName = "profile-" + user.getUserId() + ".png";
+            Path uploadPath = Paths.get(UPLOAD_DIRECTORY, fileName);
+
+            Files.createDirectories(uploadPath.getParent());
+            Files.write(uploadPath, file.getBytes());
+
+            user.setProfilePicturePath("/uploads/" + fileName);
+            userRepository.save(user);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -90,5 +99,4 @@ public class AccountController {
         }
         return "redirect:/manage-account?profilePictureUploaded=true";
     }
-
 }
