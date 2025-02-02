@@ -17,15 +17,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @EnableWebSecurity
 public class SecurityConfig {
 
-//    @Bean
-//    MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
-//        return new MvcRequestMatcher.Builder(introspector).servletPath("/");
-//    }
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                /*.csrf(AbstractHttpConfigurer::disable)*/
                 .csrf(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
