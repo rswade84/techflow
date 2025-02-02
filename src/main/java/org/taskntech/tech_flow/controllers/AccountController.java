@@ -28,24 +28,24 @@ public class AccountController {
         return "manage-account";
     }
 
-    // Unified method to find user by email, GitHub ID, or Google Sub ID.
+    /**
+     * **Unified method to find user based on provider.**
+     * - **Google users** → find by Google Sub ID.
+     * - **GitHub users** → find by GitHub ID.
+     * - **Only fallback to email if needed.**
+     */
     private User findUserByOAuth(OAuth2AuthenticationToken authentication, OAuth2User principal) {
         String provider = authentication.getAuthorizedClientRegistrationId();
-        String email = principal.getAttribute("email");
 
-        User user = userRepository.findByEmail(email);
-
-        if (user == null) {
-            if ("github".equals(provider)) {
-                Integer githubIdInt = principal.getAttribute("id");
-                String githubId = (githubIdInt != null) ? String.valueOf(githubIdInt) : null;
-                user = userRepository.findByGithubId(githubId);
-            } else if ("google".equals(provider)) {
-                String googleSubId = principal.getAttribute("sub");
-                user = userRepository.findByGoogleSubId(googleSubId);
-            }
+        if ("github".equals(provider)) {
+            Integer githubIdInt = principal.getAttribute("id");
+            String githubId = (githubIdInt != null) ? String.valueOf(githubIdInt) : null;
+            return userRepository.findByGithubId(githubId);
+        } else if ("google".equals(provider)) {
+            String googleSubId = principal.getAttribute("sub");
+            return userRepository.findByGoogleSubId(googleSubId);
         }
-        return user;
+        return null;
     }
 
     // Handles updating the display name of a user based on their authentication provider.
@@ -57,7 +57,19 @@ public class AccountController {
         User user = findUserByOAuth(authentication, principal);
 
         if (user == null) {
-            return "redirect:/manage-account?error=UserNotFound";
+            // If no user exists, create one based on the provider
+            String email = principal.getAttribute("email");
+            String accountName = principal.getAttribute("name");
+
+            if ("github".equals(authentication.getAuthorizedClientRegistrationId())) {
+                Integer githubIdInt = principal.getAttribute("id");
+                String githubId = (githubIdInt != null) ? String.valueOf(githubIdInt) : null;
+                user = new User(email, accountName, githubId, null);
+            } else if ("google".equals(authentication.getAuthorizedClientRegistrationId())) {
+                String googleSubId = principal.getAttribute("sub");
+                user = new User(email, accountName, null, googleSubId);
+            }
+            userRepository.save(user);
         }
 
         user.setDisplayName(displayName);
