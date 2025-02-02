@@ -11,6 +11,7 @@ import org.taskntech.tech_flow.exceptions.TicketNotFoundException;
 import org.taskntech.tech_flow.models.PriorityValue;
 import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
+import org.taskntech.tech_flow.service.PopulateTable;
 import org.taskntech.tech_flow.service.TicketService;
 import org.taskntech.tech_flow.controllers.NotificationController;
 
@@ -33,10 +34,14 @@ public class ListTicketsController {
         @Autowired
         private TicketService ticketService;
 
+        @Autowired
+        private PopulateTable populateTable;
+
         // List all tickets
         @GetMapping
         public String listTickets(Model model, @RequestParam(name = "sortBy", required = false, defaultValue = "Default") String sortBy ) {
 
+                //List sorted tickets default by ID
                 List<Ticket> tickets = ticketService.getTicketList(sortBy);
                 if (tickets == null) {
                         tickets = new ArrayList<>(); // Handle null by initializing an empty list
@@ -62,9 +67,13 @@ public class ListTicketsController {
                 return "tickets/create";
         }
 
+        //after closed ticket button is pressed
         @PostMapping("/close/{ticketId}")
         public String closeTicket(@PathVariable Integer ticketId) {
+                //if ticket is found
                 try {
+
+                        //closes ticket and removes from view
                         ticketService.closeTicket(ticketId);
                         return "redirect:/tickets";
                 } catch (TicketNotFoundException e) {
@@ -104,6 +113,9 @@ public class ListTicketsController {
 
                 try {
                         ticketService.createTicket(ticket);
+
+                        //add to recent activity log
+                        ticketService.addRecentActivity(0, ticket);
                         return "redirect:/tickets";
                 } catch (ValidationException e) {
                         model.addAttribute("priorityValues", PriorityValue.values());
@@ -136,6 +148,29 @@ public class ListTicketsController {
                         // If notes have changed, update them separately
                         if (currentTicket != null && !Objects.equals(currentTicket.getNotes(), ticket.getNotes())) {
                                 ticketService.addOrUpdateNote(ticketId, ticket.getNotes());
+
+                                //update recent activity log
+                                ticketService.addRecentActivity(4,ticket);
+                        }
+
+                        //update recent activity log if status has changed
+                        if (currentTicket != null && !Objects.equals(currentTicket.getStatus(), ticket.getStatus())) {
+                                ticketService.addRecentActivity(2,ticket);
+
+                        }
+                        //update recent activity log if priority has changed
+                        if (currentTicket != null && !Objects.equals(currentTicket.getPriority(), ticket.getPriority())) {
+                                ticketService.addRecentActivity(3,ticket);
+
+                        }
+
+                        //update recent activity log if anything else has changed
+                        if (currentTicket != null && (!Objects.equals(currentTicket.getName(), ticket.getName()) ||
+                                !Objects.equals(currentTicket.getEmail(), ticket.getEmail()) ||
+                                !Objects.equals(currentTicket.getDetails(), ticket.getDetails()) ||
+                                !Objects.equals(currentTicket.getClientDepartment(), ticket.getClientDepartment()))){
+
+                                ticketService.addRecentActivity(1,ticket);
                         }
 
                         ticketService.updateTicket(ticket);
@@ -153,8 +188,15 @@ public class ListTicketsController {
                         return "tickets/edit";
                 }
 
-}
-                // Setter for unit testing
+        }
+
+        @PostMapping
+        public String populateTheTable(Model model){
+                populateTable.populateATable();
+                return "redirect:/tickets";
+        }
+
+        // Setter for unit testing
                 public void setTicketService (TicketService ticketService){
                         this.ticketService = ticketService;
                 }

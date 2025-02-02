@@ -1,10 +1,6 @@
 package org.taskntech.tech_flow.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,14 +15,11 @@ public class Ticket extends AbstractEntity {
 
     private LocalDateTime statusLastUpdated;  // Timestamp of last status change
     private StatusUpdates previousStatus;     // Stores the previous status value
-
-    //NO declarative are needed
-    //Going to switch to java.sql.timestamp
     private LocalDateTime lastEdited;
 
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ticketId;
 
     // UPDATE - Had to increase message details length
@@ -40,13 +33,12 @@ public class Ticket extends AbstractEntity {
     private PriorityValue priority;
 
 
-    //find declarative
+
     // UPDATE - Changed from String to StatusUpdates enum for proper enum handling
     @Enumerated(EnumType.STRING)
     private StatusUpdates status;
 
     //NO declarative are needed
-    //Going to switch to java.sql.timestamp
     private final LocalDateTime dateSubmitted;
 
     @NotBlank
@@ -58,7 +50,7 @@ public class Ticket extends AbstractEntity {
 
     // UPDATE - Updated constructor to use PriorityValue enum instead of int
     public Ticket(String name, String email, String details, PriorityValue priority, String clientDepartment) {
-        super(name, email);
+        super(name, email); //declares superclass values
         this.details = details;
         this.priority = priority;
         this.clientDepartment = clientDepartment;
@@ -79,6 +71,25 @@ public class Ticket extends AbstractEntity {
         this.dateSubmitted = LocalDateTime.now();
     }
 
+    //constructor for populating table
+    //can leave uncommented
+    public Ticket(String name, String email, LocalDateTime statusLastUpdated, StatusUpdates previousStatus,
+                  LocalDateTime lastEdited,String details, PriorityValue priority, StatusUpdates status,
+                  LocalDateTime dateSubmitted, String clientDepartment, String notes) {
+        super(name, email);
+        this.statusLastUpdated = statusLastUpdated;
+        this.previousStatus = previousStatus;
+        this.lastEdited = lastEdited;
+        this.details = details;
+        this.priority = priority;
+        this.status = status;
+        this.dateSubmitted = dateSubmitted;
+        this.clientDepartment = clientDepartment;
+        this.notes = notes;
+    }
+
+
+    //Setters and Getters
 
     public String getDetails() {
         return details;

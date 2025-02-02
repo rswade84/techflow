@@ -3,69 +3,89 @@
 
 <head th:fragment="head">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
+<!--    <script src="https://cdn.tailwindcss.com"></script>-->
+
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
-<!--    <script src="https://cdn.jsdelivr.net/sockjs/1.1.4/sockjs.min.js"></script>-->
-<!--    <script src="https://cdn.jsdelivr.net/stompjs/1.7.1/stomp.min.js"></script>-->
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <title>TechFlow</title>
 </head>
 
 <body>
-<header th:fragment="header" class="bg-white p-6 flex items-center justify-between min-h-[103px]">
-    <div class="flex items-center">
-        <h1 class="text-4xl font-bold">TechFlow</h1>
-    </div>
-    <th:block th:if="${requestUri != '/'}">
-        <nav class="flex items-center" th:with="currentStyles=${'border border-gray-500 bg-gray-200'}">
-            <ul class="flex justify-end space-x-5 text-black">
-                <li><a href="/tickets/create"
-                       class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
-                       th:classappend="${requestUri == '/tickets/create'} ? ${currentStyles} : bg-gray-100">Create
-                    Ticket</a>
-                </li>
-                <li><a href="/tickets"
-                       class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
-                       th:classappend="${requestUri == '/tickets'} ? ${currentStyles} : bg-gray-100">All Tickets</a>
-                </li>
-                <li><a href="/dashboard"
-                       class="hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
-                       th:classappend="${requestUri == '/dashboard'} ? ${currentStyles} : bg-gray-100">Dashboard</a>
-                </li>
-                <!--                <li><a href="/manage-account"-->
-                <!--                       class="bg-gray-300 hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">Manage-->
-                <!--                    Account</a></li>-->
-                <!--                <li>-->
-                <form th:action="@{/logout}" method="post" class="mt-[-6px]">
-                    <button type="submit"
-                            class="text-white bg-gray-900 hover:bg-gray-600 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-[0.516rem] focus:outline-none">
-                        Logout
-                    </button>
-                </form>
-                </li>
-            </ul>
+<!--<header th:fragment="header" class="bg-white p-6 flex items-center justify-between min-h-[103px]">-->
+<header th:fragment="header" class="bg-white p-6 min-h-[103px]">
+    <nav class="flex flex-wrap items-center justify-between"
+         th:with="currentStyles=${'border border-gray-500 bg-gray-200'}">
+        <div class="flex items-center float-left pt-[6px]">
+            <h1 class="text-4xl font-bold">TechFlow</h1>
+        </div>
+        <th:block th:if="${requestUri != '/'}">
+            <button data-collapse-toggle="navbar-default" type="button"
+                    class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                    aria-controls="navbar-default" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 17 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M1 1h15M1 7h15M1 13h15"></path>
+                </svg>
+            </button>
+            <div class="hidden w-full md:contents md:w-auto" id="navbar-default">
+                <ul class="flex flex-col md:flex-row justify-end md:space-x-5 text-black md:items-center p-4 md:p-0 mt-4 md:mt-0 md:bg-inherit bg-gray-100">
+                    <li><a href="/tickets/create"
+                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none text-center mb-2 md:mb-0"
+                           th:classappend="${requestUri == '/tickets/create'} ? ${currentStyles} : bg-gray-100">Create
+                        Ticket</a>
+                    </li>
+                    <li><a href="/tickets"
+                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none text-center mb-2 md:mb-0"
+                           th:classappend="${requestUri == '/tickets'} ? ${currentStyles} : bg-gray-100">All Tickets</a>
+                    </li>
+                    <li><a href="/dashboard"
+                           class="block hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none text-center mb-2 md:mb-0"
+                           th:classappend="${requestUri == '/dashboard'} ? ${currentStyles} : bg-gray-100">Dashboard</a>
+                    </li>
+                    <!--                <li><a href="/manage-account"-->
+                    <!--                       class="bg-gray-300 hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none">Manage-->
+                    <!--                    Account</a></li>-->
+                    <!--                <li>-->
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="mt-[1px]">
+                            <button type="submit"
+                                    class="w-full text-white bg-gray-600 hover:bg-gray-900 focus:ring-1 focus:ring-gray-603 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none mb-2 md:mb-0">
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <div data-tooltip-target="tooltip-manage-account"
+                             class="text-black font-bold flex-col item-center md:!ml-3 hover:bg-gray-300 focus:ring-1 focus:ring-gray-603 rounded-lg focus:outline-none">
+                            <a href="/manage-account"><img th:src="${profilePicturePath}" alt="Profile Picture"
+                                                           class="w-10 h-10 rounded-full border border-gray-300 object-cover m-auto"></a>
+                            <p class="text-[10px] text-center"><a href="/manage-account"><span th:text="${name}"></span></a></p>
+                            <div id="tooltip-manage-account" role="tooltip"
+                                 class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                Manage Account
 
-            <div data-tooltip-target="tooltip-manage-account" class="text-black font-bold flex-col item-center !ml-3">
-                <a href="/manage-account"><img th:src="${profilePicturePath}" alt="Profile Picture"
-                                               class="w-10 h-10 rounded-full border border-gray-300 object-cover m-auto"></a>
-                <p class="text-[10px] text-center"><a href="/manage-account"><span th:text="${name}"></span></a></p>
-                <div id="tooltip-manage-account" role="tooltip"
-                     class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                    Manage Account
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
 
-                    <div class="tooltip-arrow" data-popper-arrow></div>
-                </div>
+
             </div>
-        </nav>
-    </th:block>
+        </th:block>
+    </nav>
+
 </header>
 
 <div th:fragment="notification" id="notification" class="hidden absolute left-[10px] bg-orange-500">
     <button id="notification-close" class="border border-black leading-none">X</button>
 </div>
-<!--<script th:src="@{/js/notification.js}"></script>-->
 
 </body>
 

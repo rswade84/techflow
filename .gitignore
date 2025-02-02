@@ -38,3 +38,10 @@ out/
 local.env
 .DS_Store
 **/.DS_Store
+
+####logs######
+spring.log
+logs
+### Frontend ###
+/src/main/frontend/node_modules/
+/src/main/frontend/

@@ -9,10 +9,12 @@ public enum StatusUpdates {
 
     private final String displayStatus;
 
+    //Sets displayStatus to Not started, in progress ...etc
     private StatusUpdates(String value){
         this.displayStatus=value;
     }
 
+    //get String value of Enum for display
     public String getDisplayStatus(){
         return displayStatus;
     }
