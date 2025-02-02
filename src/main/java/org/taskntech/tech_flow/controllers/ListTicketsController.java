@@ -19,17 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Controller
-@RequestMapping("/tickets")
+@Controller // Indicates a Spring MVC controller
+@RequestMapping("/tickets") // Sets the base URL/Endpoint to /tickets
 public class ListTicketsController {
 
-        @Autowired
+        @Autowired // Injects TicketService dependency for database operations
         private TicketService ticketService;
 
         @Autowired
         private PopulateTable populateTable;
 
-        // List all tickets
+        // List all tickets, GetMapping indicates a GET request
         @GetMapping
         public String listTickets(Model model, @RequestParam(name = "sortBy", required = false, defaultValue = "Default") String sortBy ) {
 
@@ -39,6 +39,7 @@ public class ListTicketsController {
                         tickets = new ArrayList<>(); // Handle null by initializing an empty list
                 }
 
+                // Accepts "Key/Value" pairs. Key = is string identifier (thymeleaf), Value = is the data passed
                 model.addAttribute("tickets", tickets);
                 model.addAttribute("sortBy", sortBy);
                 model.addAttribute("sortOptions",  ticketService.sortOptions);
@@ -49,14 +50,14 @@ public class ListTicketsController {
         // Display the form to create a new ticket
         @GetMapping("/create")
         public String displayCreateTicketForm(Model model) {
-                // Instantiates a new ticket
+                // Instantiates a new ticket, via "new" keyword
                 model.addAttribute("ticket", new Ticket());
 
-                // Gets all the values (High, MEDIUM, LOW)
+                // Sets values to view from PriorityValue (Model - High, MEDIUM, LOW)
                 model.addAttribute("priorityValues", PriorityValue.values());
-                // Gets all enum from StatusUpdates (NOT STARTED, IN PROGRESS, etc)
+                // Sets values to view from StatusUpdates (Model - NOT STARTED, IN PROGRESS, DELAYED, RESOLVED, CLOSED)
                 model.addAttribute("statusValues", StatusUpdates.values());
-                // Returns path to Thymeleaf that will display the form
+
                 return "tickets/create";
         }
 
@@ -78,22 +79,22 @@ public class ListTicketsController {
 
                 Ticket ticket = ticketService.findTicketById(ticketId);
 
-                // Try to find ticket
+                // Look for ticket that you are trying to edit
                 if (ticket == null) {
                         throw new TicketNotFoundException("Ticket not found with ID: " + ticketId);
                 }
-                model.addAttribute("ticket", ticket); // Adds the existing ticket
+                model.addAttribute("ticket", ticket); // Add existing ticket from line #80
                 model.addAttribute("priorityValues", PriorityValue.values()); // Adds the priority values
                 model.addAttribute("statusValues", StatusUpdates.values()); // Adds the status values
-                return "tickets/edit"; // Returns the edit form
+                return "tickets/edit";
         }
 
-        // Process the ticket creation form
+        // Send POST request to submit data from form
         @PostMapping("/create")
         public String processCreateTicketForm(
-                @Valid @ModelAttribute("ticket") Ticket ticket,
-                BindingResult bindingResult,
-                Model model) {
+                @Valid @ModelAttribute("ticket") Ticket ticket, // ModelAtt binds data to ticket object
+                BindingResult bindingResult, // BindingResult stores validation errors, if any
+                Model model) { // Model interface is needed to use model.addAttribute for view
                 if (bindingResult.hasErrors()) {
                         model.addAttribute("priorityValues", PriorityValue.values());
                         model.addAttribute("statusValues", StatusUpdates.values());
@@ -135,7 +136,7 @@ public class ListTicketsController {
                         // Get current ticket first
                         Ticket currentTicket = ticketService.findTicketById(ticketId);
 
-                        // Check if notes have changed, update if so
+                        // If notes have changed, update them separately
                         if (currentTicket != null && !Objects.equals(currentTicket.getNotes(), ticket.getNotes())) {
                                 ticketService.addOrUpdateNote(ticketId, ticket.getNotes());
 
