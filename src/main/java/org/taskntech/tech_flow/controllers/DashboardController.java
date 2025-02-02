@@ -25,10 +25,10 @@ public class DashboardController {
     @GetMapping
     public String displayAnalytics(Model model) throws JsonProcessingException {
 
-            // Added: Get response time metrics
+            // Get response time metrics
             ResponseTimeMetrics metrics = ticketService.getResponseTimeMetrics();
 
-            // Added: Displaying response time metrics
+            // Send metrics to view
             model.addAttribute("responseMetrics", ticketService.getResponseTimeMetrics());
 
             //Added array list recentActivityLog to view for recent activity
