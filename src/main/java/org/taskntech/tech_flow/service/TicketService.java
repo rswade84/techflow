@@ -12,8 +12,6 @@ import org.taskntech.tech_flow.models.StatusUpdates;
 import org.taskntech.tech_flow.models.Ticket;
 import org.taskntech.tech_flow.notifications.TicketUpdatedEvent;
 import java.time.Duration;
-
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -200,8 +198,7 @@ public class TicketService {
 
         }
 
-        // Update ticket status
-        // Using optional<> since it returns null or the ticket
+        // Update ticket status with optional<> since it returns null or the ticket
         public Ticket updateTicketStatus(Integer ticketId, StatusUpdates newStatus) {
                 // Fetch the ticket by its ticketId
                 Optional<Ticket> retrievedTicket = ticketRepository.findById(ticketId);
@@ -211,7 +208,6 @@ public class TicketService {
                 if (newStatus == StatusUpdates.CLOSED){
                         num = 5; //ticket was closed
                 }
-
 
                 // Check if the ticket exists
                 if (retrievedTicket.isPresent()) {
@@ -311,40 +307,38 @@ public class TicketService {
                 return ticketRepository.findById(ticketId).orElse(null);
         }
 
-        // This method is used when a user wants to change the status of a ticket.
-        // It returns a boolean that handles all StatusUpdate ENUMS (not_started, in_progress, delayed, etc.) and checks if they are valid
+        // When user change status, returns a boolean that handles all StatusUpdate ENUMS and checks if they are valid
         public boolean isValidStatusTransition(StatusUpdates currentStatus, StatusUpdates newStatus) {
 
-                // Adding a method to check if the status transition is valid
-                // This method takes the current and desired new status as parameters
+                // Method to check if status transition is valid (current/desired parameters)
                 switch (currentStatus) { // Evaluates the current ticket status
                         case NOT_STARTED: // If the current status is NOT_STARTED
                                 // Only allows transition to IN_PROGRESS
                                 return newStatus == StatusUpdates.CLOSED ||
                                         newStatus == StatusUpdates.IN_PROGRESS; // This updates the status to IN_PROGRESS
 
-                        // Only 2 possible transitions from IN_PROGRESS. Either its DELAYED, or RESOLVED
+                        // 2 possible transitions. (DELAYED or RESOLVED)
                         case IN_PROGRESS:
                                 return newStatus == StatusUpdates.CLOSED ||
                                         newStatus == StatusUpdates.DELAYED ||
                                         newStatus == StatusUpdates.RESOLVED; // OPTIONS: Moves ticket to DELAYED or RESOLVED
 
-                        // Only 2 possible transitions from DELAYED. Either its IN_PROGRESS, or RESOLVED
+                        // 2 possible transitions. (IN_PROGRESS, or RESOLVED)
                         case DELAYED:
                                 return newStatus == StatusUpdates.CLOSED ||
                                         newStatus == StatusUpdates.IN_PROGRESS ||
                                         newStatus == StatusUpdates.RESOLVED; // OPTIONS: Moves ticket to IN_PROGRESS or RESOLVED
 
-                        // Added StatusUpdates.RESOLVED because ticket may need to be re-opened by user
+                        // Allows user to re-open ticket, if needed.
                         case RESOLVED:
                                 return newStatus == StatusUpdates.CLOSED ||
                                         newStatus == StatusUpdates.IN_PROGRESS; // OPTIONS: Moves ticket to CLOSED or back to IN_PROGRESS
 
-                        // Only 1 possible transition from CLOSED.
+                        // 1 possible transition to CLOSED, can't be re-opened.
                         case CLOSED:
-                                return false; // Ticket is closed and cant be re-opened.
+                                return false;
                 }
-                return false; // IntelliJ forced me to add. I assumed for any unexpected cases, return false.
+                return false;
 
         }
 
@@ -395,6 +389,7 @@ public class TicketService {
         }
 
         public double getAverageInitialResponseTime() {
+                // Store all tickets - Lazy loading (Iterable loads what is needed only)
                 Iterable<Ticket> tickets = ticketRepository.findAll();
                 double totalHours = 0;
                 int count = 0;
@@ -405,16 +400,15 @@ public class TicketService {
                                 ticket.getDateSubmitted() != null &&
                                 ticket.getStatus() != StatusUpdates.NOT_STARTED) {
 
+                                // then calculate the duration
                                 Duration duration = Duration.between(
                                         ticket.getDateSubmitted(),
                                         ticket.getStatusLastUpdated()
                                 );
                                 totalHours += duration.toHours();
                                 count++;
-
                         }
                 }
-
                 return count > 0 ? totalHours / count : 0.0;
         }
 
@@ -429,6 +423,7 @@ public class TicketService {
                                 if (ticket.getStatusLastUpdated() != null &&
                                         ticket.getDateSubmitted() != null) {
 
+                                        // then calculate the duration
                                         Duration duration = Duration.between(
                                                 ticket.getDateSubmitted(),
                                                 ticket.getStatusLastUpdated()
@@ -438,11 +433,11 @@ public class TicketService {
                                 }
                         }
                 }
-
                 return count > 0 ? totalHours / count : 0.0;
         }
 
         public ResponseTimeMetrics getResponseTimeMetrics() {
+                // Calculate average response time
                 return new ResponseTimeMetrics(
                         getAverageInitialResponseTime(),
                         getAverageResolutionTime()

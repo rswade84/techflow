@@ -4,15 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-//import jakarta.validation.constraints.Size;
-//import jakarta.validation.constraints.NotBlank;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Entity
 public class Ticket extends AbstractEntity {
 
+    // Status Options for Ticket (Updated in TicketService.java)
     private LocalDateTime statusLastUpdated;  // Timestamp of last status change
     private StatusUpdates previousStatus;     // Stores the previous status value
     private LocalDateTime lastEdited;
@@ -22,46 +20,43 @@ public class Ticket extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ticketId;
 
-    // UPDATE - Had to increase message details length
+    // Ticket Name Length
     @NotBlank
     @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters")
     private String details;
 
-    // UPDATE - Changed from int to PriorityValue enum for proper enum handling
     @NotNull(message = "Priority level is required")
     @Enumerated(EnumType.STRING)
     private PriorityValue priority;
 
-
-
-    // UPDATE - Changed from String to StatusUpdates enum for proper enum handling
+    // Declares the status field for the Ticket class
     @Enumerated(EnumType.STRING)
     private StatusUpdates status;
 
-    //NO declarative are needed
+    // Date ticket was submitted
     private final LocalDateTime dateSubmitted;
 
+    // Dictates department name size and should not be blank
     @NotBlank
     @Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
     private String clientDepartment;
 
-    //edit after core features are done
+    // This is used for internal notes storage
     private String notes;
 
-    // UPDATE - Updated constructor to use PriorityValue enum instead of int
+    // Constructor to set default values for all tickets
     public Ticket(String name, String email, String details, PriorityValue priority, String clientDepartment) {
-        super(name, email); //declares superclass values
+        super(name, email);
         this.details = details;
         this.priority = priority;
         this.clientDepartment = clientDepartment;
-        this.status = StatusUpdates.NOT_STARTED;  // Initialize status
-        this.previousStatus = null;               // Initialize previousStatus
+        this.status = StatusUpdates.NOT_STARTED; // Initialize status
+        this.previousStatus = null; // Initialize previousStatus
         this.statusLastUpdated = LocalDateTime.now(); // Initialize statusLastUpdated
         this.dateSubmitted = LocalDateTime.now();
     }
 
-    // Added a No-argument constructor
-    // UPDATED - to initialize previousStatus and statusLastUpdated
+    // Default constructor - Used when creating a new ticket
     public Ticket() {
         super("", "");
         this.priority = PriorityValue.LOW;
@@ -71,8 +66,7 @@ public class Ticket extends AbstractEntity {
         this.dateSubmitted = LocalDateTime.now();
     }
 
-    //constructor for populating table
-    //can leave uncommented
+    // Constructor used to populate test data for table
     public Ticket(String name, String email, LocalDateTime statusLastUpdated, StatusUpdates previousStatus,
                   LocalDateTime lastEdited,String details, PriorityValue priority, StatusUpdates status,
                   LocalDateTime dateSubmitted, String clientDepartment, String notes) {
@@ -89,7 +83,7 @@ public class Ticket extends AbstractEntity {
     }
 
 
-    //Setters and Getters
+    // Setters and Getters
 
     public String getDetails() {
         return details;

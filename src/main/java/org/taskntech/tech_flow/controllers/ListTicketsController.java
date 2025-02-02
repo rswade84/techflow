@@ -19,14 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/*
- * Model is an interface that is used to add data to the model.
- * @PathVariable = is used to bind the URL path variable to a method parameter.
- * @Valid = is used to validate the object before saving it to the database.
- * @ModelAttribute = is used to bind the form data to a model object.
- *
- * */
-
 @Controller
 @RequestMapping("/tickets")
 public class ListTicketsController {
@@ -57,22 +49,21 @@ public class ListTicketsController {
         // Display the form to create a new ticket
         @GetMapping("/create")
         public String displayCreateTicketForm(Model model) {
-                // Creates an empyt ticket object  and adds it to the model
-                model.addAttribute("ticket", new Ticket()); // remember, use of new keyword creates new object
-                // Gets all the values from PriorityValues (High, MEDIUM, LOW)
+                // Instantiates a new ticket
+                model.addAttribute("ticket", new Ticket());
+
+                // Gets all the values (High, MEDIUM, LOW)
                 model.addAttribute("priorityValues", PriorityValue.values());
-                // Gets all enum values from StatusUpdates (NOT STARTED, IN PROGRESS, etc)
+                // Gets all enum from StatusUpdates (NOT STARTED, IN PROGRESS, etc)
                 model.addAttribute("statusValues", StatusUpdates.values());
                 // Returns path to Thymeleaf that will display the form
                 return "tickets/create";
         }
 
-        //after closed ticket button is pressed
+        // after closed ticket button is pressed
         @PostMapping("/close/{ticketId}")
         public String closeTicket(@PathVariable Integer ticketId) {
-                //if ticket is found
                 try {
-
                         //closes ticket and removes from view
                         ticketService.closeTicket(ticketId);
                         return "redirect:/tickets";
@@ -81,14 +72,13 @@ public class ListTicketsController {
                 }
         }
 
-
-                // Display edit form for existing ticket
+        // Display edit form for existing ticket
         @GetMapping("/edit/{ticketId}")
         public String showEditForm(@PathVariable Integer ticketId, Model model) {
-                // Using optional for cases of if the ticket does not exist
+
                 Ticket ticket = ticketService.findTicketById(ticketId);
 
-                // Try to find the ticket and store it
+                // Try to find ticket
                 if (ticket == null) {
                         throw new TicketNotFoundException("Ticket not found with ID: " + ticketId);
                 }
@@ -145,7 +135,7 @@ public class ListTicketsController {
                         // Get current ticket first
                         Ticket currentTicket = ticketService.findTicketById(ticketId);
 
-                        // If notes have changed, update them separately
+                        // Check if notes have changed, update if so
                         if (currentTicket != null && !Objects.equals(currentTicket.getNotes(), ticket.getNotes())) {
                                 ticketService.addOrUpdateNote(ticketId, ticket.getNotes());
 
@@ -187,7 +177,6 @@ public class ListTicketsController {
                         model.addAttribute("statusValues", StatusUpdates.values());
                         return "tickets/edit";
                 }
-
         }
 
         @PostMapping
@@ -196,7 +185,6 @@ public class ListTicketsController {
                 return "redirect:/tickets";
         }
 
-        // Setter for unit testing
                 public void setTicketService (TicketService ticketService){
                         this.ticketService = ticketService;
                 }
