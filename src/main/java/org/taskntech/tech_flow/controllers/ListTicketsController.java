@@ -116,7 +116,7 @@ public class ListTicketsController {
                 }
         }
 
-        // Process the edit form submission
+        // Edit existing ticket
         @PostMapping("/edit/{ticketId}")
         public String processEditForm(@PathVariable Integer ticketId,
                                       @Valid @ModelAttribute("ticket") Ticket ticket,
