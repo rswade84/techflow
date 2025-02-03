@@ -392,8 +392,8 @@ public class TicketService {
                 double totalHours = 0;
                 int count = 0;
 
+                // Use of for-each loop to iterate through tickets
                 for (Ticket ticket : tickets) {
-                        // Look for tickets that are IN_PROGRESS or beyond etc
                         if (ticket.getStatusLastUpdated() != null &&
                                 ticket.getDateSubmitted() != null &&
                                 ticket.getStatus() != StatusUpdates.NOT_STARTED) {
@@ -435,7 +435,7 @@ public class TicketService {
         }
 
         public ResponseTimeMetrics getResponseTimeMetrics() {
-                // Calculate average response time
+                // Calculate average response time from two other methods
                 return new ResponseTimeMetrics(
                         getAverageInitialResponseTime(),
                         getAverageResolutionTime()

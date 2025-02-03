@@ -13,7 +13,7 @@ public class ResponseTimeMetrics {
                 this.averageResolutionTime = averageResolutionTime;
         }
 
-        // Method that returns "Xh Ym" formatted string (hours/mins)
+        // Method that returns formatted string (hours/mins)
         public String getFormattedInitialResponseTime() {
                 long hours = (long) averageInitialResponseTime;
                 long minutes = (long) ((averageInitialResponseTime - hours) * 60);
