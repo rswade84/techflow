@@ -319,18 +319,18 @@ public class TicketService {
                         case IN_PROGRESS:
                                 return newStatus == StatusUpdates.CLOSED ||
                                         newStatus == StatusUpdates.DELAYED ||
-                                        newStatus == StatusUpdates.RESOLVED; // OPTIONS: Moves ticket to DELAYED or RESOLVED
+                                        newStatus == StatusUpdates.RESOLVED;
 
                         // 2 possible transitions. (IN_PROGRESS, or RESOLVED)
                         case DELAYED:
                                 return newStatus == StatusUpdates.CLOSED ||
                                         newStatus == StatusUpdates.IN_PROGRESS ||
-                                        newStatus == StatusUpdates.RESOLVED; // OPTIONS: Moves ticket to IN_PROGRESS or RESOLVED
+                                        newStatus == StatusUpdates.RESOLVED;
 
                         // Allows user to re-open ticket, if needed.
                         case RESOLVED:
                                 return newStatus == StatusUpdates.CLOSED ||
-                                        newStatus == StatusUpdates.IN_PROGRESS; // OPTIONS: Moves ticket to CLOSED or back to IN_PROGRESS
+                                        newStatus == StatusUpdates.IN_PROGRESS;
 
                         // 1 possible transition to CLOSED, can't be re-opened.
                         case CLOSED:
