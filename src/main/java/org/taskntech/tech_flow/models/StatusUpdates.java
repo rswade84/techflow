@@ -19,7 +19,7 @@ public enum StatusUpdates {
         return displayStatus;
     }
 
-    // UPDATE - Added toString method
+    // toString method to return string
     @Override
     public String toString() {
         return name();
