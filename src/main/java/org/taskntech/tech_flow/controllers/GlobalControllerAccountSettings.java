@@ -20,6 +20,21 @@ public class GlobalControllerAccountSettings {
 
     private static final String DEFAULT_PROFILE_PICTURE_URL = "https://www.tenforums.com/attachments/user-accounts-family-safety/322690d1615743307-user-account-image-log-user.png";
 
+    // Finds user based on the authentication provider
+    private User findUserByOAuth(OAuth2AuthenticationToken authentication, OAuth2User principal) {
+        String provider = authentication.getAuthorizedClientRegistrationId();
+
+        if ("github".equals(provider)) {
+            Integer githubIdInt = principal.getAttribute("id");
+            String githubId = (githubIdInt != null) ? String.valueOf(githubIdInt) : null;
+            return userRepository.findByGithubId(githubId);
+        } else if ("google".equals(provider)) {
+            String googleSubId = principal.getAttribute("sub");
+            return userRepository.findByGoogleSubId(googleSubId);
+        }
+        return null;
+    }
+
     @ModelAttribute
     public void addGlobalAttributes(@AuthenticationPrincipal OAuth2User principal,
                                     OAuth2AuthenticationToken authentication, Model model) {
@@ -28,9 +43,10 @@ public class GlobalControllerAccountSettings {
             String email = principal.getAttribute("email");
             String name = principal.getAttribute("name");
 
-            User user = userRepository.findByEmail(email); // Checks for existing user by email
+            User user = findUserByOAuth(authentication, principal);
 
-            if (user == null) { // If user doesn't exist, create a new one
+            if (user == null) {
+                // If user doesn't exist, create a new one
                 if ("github".equals(provider)) {
                     Integer githubIdInt = principal.getAttribute("id");
                     String githubId = (githubIdInt != null) ? String.valueOf(githubIdInt) : null;
@@ -40,7 +56,7 @@ public class GlobalControllerAccountSettings {
                     user = new User(email, name, null, googleSubId);
                 }
                 userRepository.save(user);
-            } else { // If user exists, update their GitHub/Google ID if missing
+            } else {
                 if ("github".equals(provider) && user.getGithubId() == null) {
                     Integer githubIdInt = principal.getAttribute("id");
                     user.setGithubId((githubIdInt != null) ? String.valueOf(githubIdInt) : null);
