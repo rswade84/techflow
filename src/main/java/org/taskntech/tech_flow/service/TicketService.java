@@ -23,9 +23,11 @@ import java.util.stream.StreamSupport;
 @Service
 public class TicketService {
 
-        @Autowired // Used to inject dependencies
-        private TicketRepository ticketRepository; // Used to access the repository
+        @Autowired // Automatically injects an instance of TicketRepository
+        private TicketRepository ticketRepository; // Provides access to ticket-related database operations
 
+        // Publishes events to notify other components in the program
+        // Final ensures that its initialized and can never be null
         private final ApplicationEventPublisher eventPublisher;
 
         // Constructor for injecting ApplicationEventPublisher
@@ -44,18 +46,17 @@ public class TicketService {
         //Array list of recent activity in app holds up to 10
         public ArrayList<String> recentActivityLog = new ArrayList<>();
 
-        // Create a new ticket
+        // Create a new ticket, save it to the database via ticketRepository.save()
         public Ticket createTicket(Ticket ticket) {
                 return ticketRepository.save(ticket);
         }
 
-        // Read all tickets
+        // Read all tickets, return a list of tickets
         public List<Ticket> getAllTickets() { // returns a list type of all tickets called "getAllTickets"
                 List<Ticket> tickets = new ArrayList<>(); // creating an empty list to store the tickets
                 ticketRepository.findAll().forEach(ticket -> { // Iterates over repo/database, returns all tickets and adds them to the list
                         tickets.add(ticket);
                 });
-
                 return tickets;
         }
 
@@ -180,7 +181,6 @@ public class TicketService {
                 if (ticketRepository.existsById(ticket.getTicketId())) {
                         Ticket updatedTicket = ticketRepository.save(ticket);
 
-
                         // Publish the domain event after saving the ticket
                         eventPublisher.publishEvent(new TicketUpdatedEvent(updatedTicket));
 
@@ -194,8 +194,6 @@ public class TicketService {
 
                 //change ticket status to closed
                 updateTicketStatus(ticketId,StatusUpdates.CLOSED);
-
-
         }
 
         // Update ticket status with optional<> since it returns null or the ticket
@@ -211,7 +209,7 @@ public class TicketService {
 
                 // Check if the ticket exists
                 if (retrievedTicket.isPresent()) {
-                        Ticket ticket = retrievedTicket.get(); // assign the ticket object to the variable ticket
+                        Ticket ticket = retrievedTicket.get(); // assign the ticket object to variable ticket
 
                         // Validate status transition
                         if (!isValidStatusTransition(ticket.getStatus(), newStatus)) {
