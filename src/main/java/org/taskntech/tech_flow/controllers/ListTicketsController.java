@@ -119,7 +119,7 @@ public class ListTicketsController {
         // Edit existing ticket
         @PostMapping("/edit/{ticketId}")
         public String processEditForm(@PathVariable Integer ticketId,
-                                      @Valid @ModelAttribute("ticket") Ticket ticket,
+                                      @Valid @ModelAttribute("ticket") Ticket ticket, // ModelAtt binds data to ticket object
                                       BindingResult bindingResult,
                                       Model model) {
                 // Handles any errors stored in BindingResult object
@@ -171,7 +171,7 @@ public class ListTicketsController {
 
                         return "redirect:/tickets";
 
-                // Catches ValidationExcpetion from TicketService provided by injection
+                // Catches ValidationException from TicketService provided by injection
                 } catch (ValidationException ve) {
                         model.addAttribute("errorMessage", "Invalid status transition: " + ve.getMessage());
                         model.addAttribute("priorityValues", PriorityValue.values());

@@ -10,34 +10,6 @@
 <div class="p-8">
     <h1 class="text-xl mb-4">Support Tickets</h1>
 
-    <!--/*
-      p-2 = padding
-      w-full = width
-      mb-4 = margin bottom
-      th:text = binds text
-      th:value = binds value
-      th:field = binds ticket properties to form fields
-      th:action = form action
-      th:class = add class
-      th:attr = add attribute
-      th:each = loop
-      th:replace = replace
-      td: = table data
-      tr: = table row
-      thead: = table header
-    */-->
-
-    <!--/*
-      Action Button Comments:
-      th:href = creates dynamic URL with ticket ID
-      th:action = creates form action URL with ticket ID
-      onsubmit = JavaScript confirmation before delete
-      class="inline" = keeps delete button on same line as edit
-      px-3 = horizontal padding
-      py-1 = vertical padding
-      mr-2 = right margin spacing
-    */-->
-
     <!-- Link to create new ticket -->
     <div class="flex items-center justify-between">
         <a th:href="@{/tickets/create}" class="bg-blue-500 text-white p-2 rounded mb-4 inline-block">
