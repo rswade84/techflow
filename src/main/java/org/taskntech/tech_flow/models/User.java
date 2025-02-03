@@ -15,13 +15,23 @@ public class User {
     private String email;
     private String displayName;
     private String profilePicturePath;
+    private String githubId; // Unique GitHub ID
+    private String googleSubId; // Unique Google Sub ID
 
     public User() {
     }
 
-    public User(String email, String displayName){
+    public User(String email, String displayName) {
         this.email = email;
         this.displayName = displayName;
+        this.profilePicturePath = "https://www.tenforums.com/attachments/user-accounts-family-safety/322690d1615743307-user-account-image-log-user.png";
+    }
+
+    public User(String email, String displayName, String githubId, String googleSubId){
+        this.email = email;
+        this.displayName = displayName;
+        this.githubId = githubId;
+        this.googleSubId = googleSubId;
         this.profilePicturePath = "https://www.tenforums.com/attachments/user-accounts-family-safety/322690d1615743307-user-account-image-log-user.png";
     }
 
@@ -57,5 +67,21 @@ public class User {
 
     public void setProfilePicturePath(String profilePicturePath) {
         this.profilePicturePath = profilePicturePath;
+    }
+
+    public String getGithubId() {
+        return githubId;
+    }
+
+    public void setGithubId(String githubId) {
+        this.githubId = githubId;
+    }
+
+    public String getGoogleSubId() {
+        return googleSubId;
+    }
+
+    public void setGoogleSubId(String googleSubId) {
+        this.googleSubId = googleSubId;
     }
 }
