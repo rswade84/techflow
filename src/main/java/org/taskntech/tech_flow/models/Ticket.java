@@ -41,7 +41,7 @@ public class Ticket extends AbstractEntity {
     @Size(min = 2, max = 15, message = "Department name must be between 2 and 15 characters" )
     private String clientDepartment;
 
-    // This is used for internal notes storage
+    // Internal notes storage
     private String notes;
 
     // Constructor to set default values for all tickets
@@ -97,27 +97,22 @@ public class Ticket extends AbstractEntity {
         return ticketId;
     }
 
-    // UPDATE - Added a setter for ticketId for updating
     public void setTicketId(int ticketId) {
         this.ticketId = ticketId;
     }
 
-    // UPDATE - Changed to return PriorityValue enum instead of int
     public PriorityValue getPriority() {
         return priority;
     }
 
-    // UPDATE - Changed to accept PriorityValue enum instead of int
     public void setPriority(PriorityValue priority) {
         this.priority = priority;
     }
 
-    // UPDATE - Changed to return StatusUpdates enum instead of String
     public StatusUpdates getStatus() {
         return status;
     }
 
-    // UPDATE - Changed to store enum directly instead of string value
     public void setStatus(StatusUpdates status) {
         this.status = status;
     }
@@ -126,9 +121,8 @@ public class Ticket extends AbstractEntity {
         return dateSubmitted;
     }
 
-    // UPDATE - to handle null dates
     public String getDateString(LocalDateTime date) {
-        if (date == null) { // check if the date is null
+        if (date == null) {
             return "N/A";
         }
         DateTimeFormatter dateFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -167,12 +161,10 @@ public class Ticket extends AbstractEntity {
         this.previousStatus = previousStatus;
     }
 
-    // UPDATE - added getters for status updates
     public StatusUpdates getPreviousStatus() {
         return previousStatus;
     }
 
-    // UPDATE - added getters for localdatetime
     public LocalDateTime getStatusLastUpdated() {
         return statusLastUpdated;
     }

@@ -241,14 +241,13 @@ public class TicketService {
 
         // Add or update note
         public Ticket addOrUpdateNote(Integer ticketId, String note) {
-                // Fetch the ticket by its ticketId
+                // Fetch the ticket by ID
                 Optional<Ticket> retrievedTicket = ticketRepository.findById(ticketId);
 
                 // Check if the ticket exists
                 if (retrievedTicket.isPresent()) {
                         Ticket ticket = retrievedTicket.get();
-                        // Update the note
-                        ticket.setNotes(note);
+                        ticket.setNotes(note); // Update the note
                         return ticketRepository.save(ticket);
                 } else {
                         // throw a customer exception
@@ -308,20 +307,19 @@ public class TicketService {
         // When user change status, returns a boolean that handles all StatusUpdate ENUMS and checks if they are valid
         public boolean isValidStatusTransition(StatusUpdates currentStatus, StatusUpdates newStatus) {
 
-                // Method to check if status transition is valid (current/desired parameters)
-                switch (currentStatus) { // Evaluates the current ticket status
+                switch (currentStatus) {
                         case NOT_STARTED: // If the current status is NOT_STARTED
-                                // Only allows transition to IN_PROGRESS
+                                // Allows transition to (CLOSED or IN_PROGRESS)
                                 return newStatus == StatusUpdates.CLOSED ||
-                                        newStatus == StatusUpdates.IN_PROGRESS; // This updates the status to IN_PROGRESS
+                                        newStatus == StatusUpdates.IN_PROGRESS;
 
-                        // 2 possible transitions. (DELAYED or RESOLVED)
+                        // 3 possible transitions. (CLOSED, DELAYED or RESOLVED)
                         case IN_PROGRESS:
                                 return newStatus == StatusUpdates.CLOSED ||
                                         newStatus == StatusUpdates.DELAYED ||
                                         newStatus == StatusUpdates.RESOLVED;
 
-                        // 2 possible transitions. (IN_PROGRESS, or RESOLVED)
+                        // 3 possible transitions. (CLOSED, IN_PROGRESS, or RESOLVED)
                         case DELAYED:
                                 return newStatus == StatusUpdates.CLOSED ||
                                         newStatus == StatusUpdates.IN_PROGRESS ||
