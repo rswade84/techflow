@@ -122,6 +122,7 @@ public class ListTicketsController {
                                       @Valid @ModelAttribute("ticket") Ticket ticket,
                                       BindingResult bindingResult,
                                       Model model) {
+                // Handles any errors stored in BindingResult object
                 if (bindingResult.hasErrors()) {
                         model.addAttribute("priorityValues", PriorityValue.values());
                         model.addAttribute("statusValues", StatusUpdates.values());
@@ -129,6 +130,8 @@ public class ListTicketsController {
                         return "tickets/edit";
                 }
 
+                // try/catch block to intercept errors and keep the program running
+                // Provides user with error message from TicketService injection from line #27 under Autowired
                 try {
                         ticket.setTicketId(ticketId);
                         ticket.setLastEdited();
@@ -167,11 +170,15 @@ public class ListTicketsController {
                         ticketService.updateTicket(ticket);
 
                         return "redirect:/tickets";
+
+                // Catches ValidationExcpetion from TicketService provided by injection
                 } catch (ValidationException ve) {
                         model.addAttribute("errorMessage", "Invalid status transition: " + ve.getMessage());
                         model.addAttribute("priorityValues", PriorityValue.values());
                         model.addAttribute("statusValues", StatusUpdates.values());
                         return "tickets/edit";
+                // Using Exception instead of ValidationException to catch all generic errors
+                // Exception is a generic parent class in java, unlike ValidationException which was created in TicketService
                 } catch (Exception e) {
                         model.addAttribute("errorMessage", "Error updating ticket: " + e.getMessage());
                         model.addAttribute("priorityValues", PriorityValue.values());
