@@ -9,7 +9,7 @@ TechFlow is an IT ticketing app that has admin-level features and access. Users 
 - Application database for storing ticket & user information
 - Ticket status system for managing progress
 - Ticket priority filtering
-- Notification system for new & modified tickets
+- Notification system for modified tickets WebSocket, STOMP, & SockJS
 - Internal notes for users to expand on ticket issues
 - Audit logs for users to view app activity for security purposes
 - Mobile responsiveness 
@@ -17,17 +17,17 @@ TechFlow is an IT ticketing app that has admin-level features and access. Users 
 
 ## Tech Stack
 - Languages: Java, Javascript
-- Framework: Spring
+- Framework: Spring, Tailwind
 - Template Engine: Thymeleaf
 - Database Engine: MySQL
-- External APIs: GitHub & Google API via OAuth 2.0, WebSocket API 
+- External APIs: GitHub & Google API via OAuth 2.0, WebSocket & STOMP API's 
 
 
 ## Team Members
 - Doug Hirlinger
   - External API usage (Github & Google via OAuth2)
-  - Real-time Notification with WebSocket
-  - Mobile Responsive Design 
+  - Real-time Notification with WebSocket, STOMP, SockJS
+  - Mobile Responsive Design with Tailwind CSS
 - Renaldo Wade
   - Ticket Creation & Submission
   - Status System
