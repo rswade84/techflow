@@ -61,10 +61,12 @@
             <p >Recent Activity</p>
         </div>
 
-        <div class="flex flex-col w-[80%] aspect-square overflow-auto rounded-lg space-y-2 mt-4 p-4">
-            <div th:each="log : ${recentActivity}" class=" bg-white rounded-xl shadow">
-                <p th:text="${log}" class="px-4 py-4 text-center"> </p>
+        <div class="pb-4 pt-2">
+            <div class="flex flex-col w-[100%] aspect-square webkit-scrollbar overflow-auto rounded-lg space-y-2 p-6">
+                <div th:each="log : ${recentActivity}" class=" bg-white rounded-xl shadow">
+                    <p th:text="${log}" class="px-6 py-4 text-center"> </p>
 
+                </div>
             </div>
         </div>
     </div>
