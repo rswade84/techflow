@@ -39,7 +39,7 @@ public class ListTicketsController {
                         tickets = new ArrayList<>(); // Handle null by initializing an empty list
                 }
 
-                // Accepts "Key/Value" pairs. Key = is string identifier (thymeleaf), Value = is the data passed.
+                // Accepts "Key/Value" pairs. Key = is string identifier (thymeleaf), Value = is the data passed
                 model.addAttribute("tickets", tickets);
                 model.addAttribute("sortBy", sortBy);
                 model.addAttribute("sortOptions",  ticketService.sortOptions);
