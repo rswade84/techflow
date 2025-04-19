@@ -53,7 +53,7 @@ public class ListTicketsController {
                 // Instantiates a new ticket, via "new" keyword
                 model.addAttribute("ticket", new Ticket());
 
-                // Sets values to view from PriorityValue (Model - High, MEDIUM, LOW)
+                // Sets values to view from PriorityValue (Model - High, MEDIUM, LOW)n
                 model.addAttribute("priorityValues", PriorityValue.values());
                 // Sets values to view from StatusUpdates (Model - NOT STARTED, IN PROGRESS, DELAYED, RESOLVED, CLOSED)
                 model.addAttribute("statusValues", StatusUpdates.values());
