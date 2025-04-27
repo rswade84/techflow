@@ -47,7 +47,7 @@ public class ListTicketsController {
                 return "/tickets/list";
         }
 
-        // Display the form to create a new ticket.
+        // Display the form to create a new ticket
         @GetMapping("/create")
         public String displayCreateTicketForm(Model model) {
                 // Instantiates a new ticket, via "new" keyword
